@@ -8,7 +8,9 @@ export default {
         "./resources/**/*.vue",
         "./app/Filament/**/*.php",
         "./resources/views/filament/**/*.blade.php",
+        "./resources/**/*.blade.php",
         "./vendor/filament/**/*.blade.php",
+        "./vendor/danharrin/filament-blog/resources/views/**/*.blade.php",
     ],
     theme: {
         extend: {},

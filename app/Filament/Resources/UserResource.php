@@ -1,0 +1,198 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Enums\Gender;
+use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\User;
+use Filament\Forms;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
+use Phpsa\FilamentPasswordReveal\Password;
+
+class UserResource extends Resource
+{
+    protected static ?string $model = User::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+
+                Section::make('User')->schema([
+
+                    Forms\Components\Select::make('roles')
+                        ->visible(auth()->user()?->isSuperAdmin())
+                        ->label('Role')
+                        ->placeholder("Select a role")
+                        ->selectablePlaceholder(true)
+                        ->preload()
+                        ->markAsRequired(auth()->user()?->isSuperAdmin())
+                        ->relationship('roles', 'name', fn(Builder $query) =>  $query->where('name', '!=', 'Super Admin'))
+                        ->native(false),
+                    Forms\Components\TextInput::make('name')
+                        ->required()
+                        ->maxLength(255),
+
+                    Forms\Components\TextInput::make('phone_number')
+                        ->regex("/^\+?[0-9]{1,3}?[-.\s]?(\(?\d{1,4}?\)?[-.\s]?)[\d\-.\s]{5,17}$/")->validationMessages(["Please enter a valid phone numbers"])
+                        ->maxLength(191),
+                    Forms\Components\TextInput::make('cnic')
+                        ->label("CNIC")
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\Select::make("gender")->preload()->options(function () {
+                        $gender = [];
+                        foreach (Gender::cases() as $case) {
+                            $gender[$case->value] = $case->value;
+                        }
+                        return $gender;
+                    })->columns(1)->native(false),
+                    Forms\Components\TextInput::make('address')
+                        ->maxLength(255),
+
+                    Forms\Components\Select::make('city_id')
+                        ->relationship('city', titleAttribute: 'name')
+                        ->searchable()
+                        ->preload()
+                        ->native(false),
+                    Forms\Components\Toggle::make('status')
+                        ->required()->inline(false)->offColor("danger")->onColor("success")->default(true),
+                ])->columns([
+                    'md' => 3,
+                    'sm' => 1
+                ])->description("Put user detail here"),
+                Section::make('Bank A/C Detail')->schema([
+                    Forms\Components\TextInput::make('bank_account_name')
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('bank_account_number')
+                        ->maxLength(255),
+                    Forms\Components\Select::make('bank_account_city_id')
+                        ->label('Bank A/C City')
+                        ->relationship('bankAccountCity', titleAttribute: 'name')
+                        ->searchable()
+                        ->preload()
+                        ->native(false),
+                ])->columns([
+                    'md' => 3,
+                    'sm' => 1
+                ]),
+                Section::make('Docs')->schema([
+                    Forms\Components\FileUpload::make('image')
+                        ->image(),
+                    Forms\Components\FileUpload::make('cnic_image')
+                        ->image(),
+                ])->columns([
+                    'md' => 2,
+                    'sm' => 1
+                ]),
+                Section::make('Credencials')->schema([
+                    Forms\Components\TextInput::make('email')
+                        ->email()
+                        ->required()
+                        ->maxLength(255),
+                    Password::make('password')
+                        ->autocomplete('new-password')
+                        ->password(true)
+                        ->revealable(true)
+                        ->copyable(true)
+                        ->generatable(true)
+                        ->copyText("Password Copied")
+                        ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                        ->dehydrated(fn($state) => filled($state))
+                        ->required(fn(string $context): bool => $context === 'create')
+                        ->maxLength(191)
+                ])->columns([
+                    'md' => 2,
+                    'sm' => 1
+                ])->description("Define user credentials"),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->modifyQueryUsing(function (User $user) {
+                return  $user->withoutRole('Super Admin');
+            })
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('phone_number')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('cnic')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('gender'),
+                Tables\Columns\TextColumn::make('address')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email_verified_at')
+                    ->dateTime()
+                    ->sortable(),
+                Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\ImageColumn::make('cnic_image'),
+                Tables\Columns\TextColumn::make('bank_account_name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('bank_account_number')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('bank_account_city_id')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('city.name')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('status')
+                    ->boolean(),
+                Tables\Columns\TextColumn::make('acc_deactive_at')
+                    ->dateTime()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
+        ];
+    }
+}

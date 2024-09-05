@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Gender;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,8 +16,20 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone_number')->nullable()->unique();
+            $table->string('cnic')->nullable()->unique();
+            $table->enum('gender', Gender::toArray())->nullable();
+            $table->string('address')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('image')->nullable();
+            $table->string('cnic_image')->nullable();
+            $table->string('bank_account_name')->nullable();
+            $table->string('bank_account_number')->nullable();
+            $table->foreignId('bank_account_city_id')->nullable()->constrained(table: 'cities')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('city_id')->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->boolean("status")->default(true);
+            $table->timestamp("acc_deactive_at")->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

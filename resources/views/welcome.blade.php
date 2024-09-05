@@ -79,7 +79,7 @@
     @push('script')
         <script>
             // count-down timer
-            let dest = new Date("mar 31, 2024 23:59:59").getTime();
+            let dest = new Date("Sept 30, 2024 23:59:59").getTime();
             let x = setInterval(function() {
                 let now = new Date().getTime();
                 let diff = dest - now;
