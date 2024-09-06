@@ -19,7 +19,7 @@ class MarketResource extends Resource
 {
     protected static ?string $model = Market::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
     public static function form(Form $form): Form
     {

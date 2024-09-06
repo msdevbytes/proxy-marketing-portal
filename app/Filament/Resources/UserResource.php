@@ -21,7 +21,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     public static function form(Form $form): Form
     {
@@ -121,9 +121,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (User $user) {
-                return  $user->withoutRole('Super Admin');
-            })
+            ->modifyQueryUsing(fn(User $user) => $user->withoutRole('Super Admin'))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),

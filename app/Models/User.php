@@ -8,6 +8,7 @@ use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use App\Enums\Gender;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -73,5 +74,19 @@ class User extends Authenticatable
     function bankAccountCity(): BelongsTo
     {
         return $this->belongsTo(City::class,  "bank_account_city_id");
+    }
+
+    function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+    function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
     }
 }

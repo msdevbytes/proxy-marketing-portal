@@ -31,6 +31,8 @@ class ListUsers extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('status', false)),
             'PM' => Tab::make()
                 ->modifyQueryUsing(fn(Builder $query) => $query->role('PM')),
+            'PMM' => Tab::make()
+                ->modifyQueryUsing(fn(Builder $query) => $query->role('PMM')),
         ];
     }
 }
