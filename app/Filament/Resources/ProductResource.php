@@ -5,11 +5,16 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
+use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -37,8 +42,7 @@ class ProductResource extends Resource
                             ->inline(false),
                         Forms\Components\TextInput::make('product_brand')
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('keyword')
-                            ->maxLength(255),
+                        Forms\Components\TagsInput::make('keyword')->separator(Product::keywordSeparator())->color('info'),
                         Forms\Components\TextInput::make('amz_sold_by')
                             ->maxLength(255),
 
@@ -117,19 +121,15 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\ImageColumn::make('amazone_image'),
-                Tables\Columns\TextColumn::make('product_brand')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('keyword')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('amz_sold_by')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('product_link')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('asin')
+                    ->badge()
+                    ->color('info')
+                    ->separator(',')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('seller')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('market.name')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('sale_limit_per_day')
                     ->numeric()
                     ->sortable(),
@@ -152,9 +152,7 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('category.id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('market.id')
-                    ->numeric()
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
@@ -171,9 +169,25 @@ class ProductResource extends Resource
                     ->boolean(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from')->native(false)->closeOnDateSelection()->placeholder("From Date"),
+                        DatePicker::make('created_until')->native(false)->closeOnDateSelection()->placeholder("To Date"),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -197,6 +211,7 @@ class ProductResource extends Resource
         return [
             'index' => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
+            'view' => Pages\ViewProduct::route('/{record}'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }

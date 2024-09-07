@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('market_id')->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('status')->default(true);
+            $table->timestamp('reservation_expiry');
             $table->timestamps();
         });
     }

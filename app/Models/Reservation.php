@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -14,12 +15,20 @@ class Reservation extends Pivot
         'product_id',
         'market_id',
         'status',
+        'reservation_expiry'
+    ];
+
+    protected $dates = [
+        'created_at',
+        'reservation_expiry',
     ];
 
     protected $casts = [
         'status' => 'boolean',
         'keywords' => 'array',
     ];
+
+    protected $appends = [];
 
     function market(): BelongsTo
     {

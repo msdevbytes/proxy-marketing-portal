@@ -5,10 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
 use App\Models\Reservation;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -43,7 +45,9 @@ class ReservationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Reservation $q) => $q->whereTime('reservation_expiry', '>', Carbon::now()))
             ->columns([
+                TextColumn::make('reservation_expiry')->view('tables.columns.reservation-timer')->alignCenter(),
                 Tables\Columns\TextColumn::make('reservation_number')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('keywords')

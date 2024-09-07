@@ -1,0 +1,9 @@
+@import "/vendor/filament/filament/resources/css/theme.css";
+
+@config 'tailwind.config.js';
+.timer {
+    @apply rounded-md flex dark:bg-red-600 bg-red-500 text-white text-lg px-[5px] w-28 py-[2px] justify-center items-center tracking-tight;
+}
+.timer h1 + h1:before {
+    content: ": ";
+}

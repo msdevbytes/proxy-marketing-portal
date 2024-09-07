@@ -7,9 +7,7 @@ export default defineConfig({
             input: [
                 "resources/css/app.css",
                 "resources/js/app.js",
-                "./vendor/filament/**/*.blade.php",
-                "./vendor/danharrin/filament-blog/resources/views/**/*.blade.php",
-                "./app/Filament/**/*.php",
+                "resources/css/filament/admin/theme.css",
             ],
             refresh: [...refreshPaths, "app/Livewire/**"],
         }),
