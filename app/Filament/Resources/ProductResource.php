@@ -275,7 +275,7 @@ class ProductResource extends Resource
 
         $reserved = Reservation::where('product_id', $product->id)->whereTime('reservation_expiry', '>', Carbon::now())->count();
 
-        if ($product->sale_limit_overall != $reserved) {
+        if ($product->sale_limit_per_day != $reserved) {
             $reserve = new Reservation;
 
             $reserve->user_id = auth()->user()?->id;
