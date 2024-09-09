@@ -7,10 +7,12 @@
     "require": {
         "php": "^8.2",
         "althinect/filament-spatie-roles-permissions": "^2.2",
+        "blade-ui-kit/blade-icons": "^1.7",
         "filament/filament": "^3.2",
         "hasnayeen/themes": "^3.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "mallardduck/blade-lucide-icons": "^1.23",
         "phpsa/filament-password-reveal": "^2.1",
         "spatie/laravel-activitylog": "^4.8"
     },

@@ -2,16 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\OrderStatus;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Models\Order;
 use App\Models\Product;
+use App\Models\Reservation;
 use Carbon\Carbon;
+use Filament\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\ActionSize;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup as ActionsActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Filters\Filter;
@@ -121,11 +129,7 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('keyword')
-                    ->badge()
-                    ->color('info')
-                    ->separator(',')
-                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('seller')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('market.name')
@@ -136,20 +140,31 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('sale_limit_overall')
                     ->numeric()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('commission')
-                    ->numeric()
+                    ->money('PKR', locale: 'Rs')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('keyword')
+                    ->color('primary')
+                    ->separator(',')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('id')->label('Product ID'),
                 Tables\Columns\IconColumn::make('is_expensive')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->boolean(),
                 Tables\Columns\TextColumn::make('product_price')
-                    ->numeric()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->money('PKR')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amazone_short_link')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('marketing_end_date')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('category.id')
+                Tables\Columns\TextColumn::make('category.name')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->numeric()
                     ->sortable(),
 
@@ -165,8 +180,7 @@ class ProductResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
+                Tables\Columns\IconColumn::make('status')->boolean(),
             ])
             ->filters([
                 Filter::make('created_at')
@@ -187,14 +201,27 @@ class ProductResource extends Resource
                     })
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+
+                Action::make('reserve')
+                    ->color('info')
+                    ->button()
+                    ->label('Reserve')
+                    ->icon('lucide-alarm-clock')
+                    ->action(fn(Product $product) => self::reserveProduct($product)),
+                ActionsActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                ])->label('More actions')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->size(ActionSize::Small)
+                    ->color('primary')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
+
                 ]),
             ]);
     }
@@ -222,5 +249,55 @@ class ProductResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function reserveProduct(Product $product)
+    {
+        $msg = "Reserved Successfully!";
+        $color = "danger";
+        $product = Product::find($product->id);
+        if (!$product->status) {
+            $msg = 'not enable';
+        }
+
+        $saleLImit = Order::where([['product_id', $product->id], ['status', OrderStatus::ORDERED->value]])->count();
+
+        if ($product->sale_limit_overall == $saleLImit) {
+            $msg = 'Sale limit reached';
+        }
+
+        $dailySaleLImit = Order::where([['product_id', $product->id], ['status', OrderStatus::ORDERED->value]])->groupBy('created_at')->count();
+        if ($dailySaleLImit == $product->sale_limit_per_day) {
+            $msg = 'Daily sale simit reached';
+        }
+
+
+
+        $reserved = Reservation::where('product_id', $product->id)->whereTime('reservation_expiry', '>', Carbon::now())->count();
+
+        if ($product->sale_limit_overall != $reserved) {
+            $reserve = new Reservation;
+
+            $reserve->user_id = auth()->user()?->id;
+            $reserve->product_id = $product->id;
+            $reserve->reservation_number = sprintf("%02d-%s", $product->id, time());
+            $reserve->keywords = $product->keyword;
+            $reserve->market_id = $product->market_id;
+            $reserve->status = 1;
+            $reserve->reservation_expiry = Carbon::now()->addHours(2);
+
+            $reserve->save();
+            $color = "success";
+        } else {
+            $msg = 'This product is already reserved';
+        }
+
+
+        Notification::make()
+            ->title('Hey ' . auth()->user()?->name)
+            ->body($msg)
+            ->icon('lucide-alarm-clock')
+            ->color($color)
+            ->send();
     }
 }

@@ -1,6 +1,6 @@
 <div class="timer" x-data="{
     endDate: new Date(@js($getRecord()->reservation_expiry)).getTime(),
-    remainingTime: 0,
+    remainingTime: 1,
     formatTime(time) {
         Number.prototype.zeroPad = function(length) {
             length = length || 2; // defaults to 2 if no parameter is passed
@@ -13,7 +13,6 @@
     }
 }" x-init="() => {
     setInterval(() => {
-        console.log(endDate)
         const now = new Date().getTime();
         const remainingTime = endDate - now;
         $data.remainingTime = remainingTime > 0 ? remainingTime : 0;
@@ -31,8 +30,6 @@
         </div>
     </template>
     <template x-if="remainingTime <= 0">
-        <div>
-            <div>Expired</div>
-        </div>
+        <h1 x-text="`Expired`"></h1>
     </template>
 </div>
