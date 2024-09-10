@@ -271,8 +271,6 @@ class ProductResource extends Resource
             $msg = 'Daily sale simit reached';
         }
 
-
-
         $reserved = Reservation::where('product_id', $product->id)->whereTime('reservation_expiry', '>', Carbon::now())->orderBy('reservation_expiry', 'DESC')->get();
 
         if ($product->sale_limit_per_day > $reserved?->count()) {
@@ -289,7 +287,8 @@ class ProductResource extends Resource
             $reserve->save();
             $color = "success";
         } else {
-            $msg = 'This product is already reserved  and remaining time is<br/> <b>' . Carbon::parse($reserved[0]?->reservation_expiry)->format('h:m a') . ' </b>';
+            $now = Carbon::now();
+            $msg = 'This product is already reserved and will be available in <br/> <b>' . Carbon::createFromTimestampMs($now->diffInMilliseconds($reserved[0]?->reservation_expiry))->format('h:m:s') . ' </b>';
         }
 
 
