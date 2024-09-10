@@ -273,9 +273,9 @@ class ProductResource extends Resource
 
 
 
-        $reserved = Reservation::where('product_id', $product->id)->whereTime('reservation_expiry', '>', Carbon::now())->count();
+        $reserved = Reservation::where('product_id', $product->id)->whereTime('reservation_expiry', '>', Carbon::now())->orderBy('reservation_expiry', 'DESC')->get();
 
-        if ($product->sale_limit_per_day != $reserved) {
+        if ($product->sale_limit_per_day > $reserved?->count()) {
             $reserve = new Reservation;
 
             $reserve->user_id = auth()->user()?->id;
@@ -289,7 +289,7 @@ class ProductResource extends Resource
             $reserve->save();
             $color = "success";
         } else {
-            $msg = 'This product is already reserved';
+            $msg = 'This product is already reserved  and remaining time is<br/> <b>' . Carbon::parse($reserved[0]?->reservation_expiry)->format('h:m a') . ' </b>';
         }
 
 
