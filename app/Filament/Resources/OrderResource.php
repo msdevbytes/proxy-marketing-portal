@@ -7,6 +7,7 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
 use App\Models\User;
+use Auth;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
@@ -24,6 +25,11 @@ class OrderResource extends Resource
     protected static ?string $model = Order::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+
+    public function deleteAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('delete Order');
+    }
 
     public static function form(Form $form): Form
     {
@@ -87,7 +93,7 @@ class OrderResource extends Resource
                             ->native(false)
                             ->searchable()
                             ->required()
-                            ->relationship('product', 'id'),
+                            ->relationship('product', titleAttribute: 'name'),
                     ]),
                     Section::make('Images')->schema([
                         Forms\Components\FileUpload::make('invoice_image')
@@ -133,7 +139,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('market.id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('product.id')
+                Tables\Columns\TextColumn::make('product.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')

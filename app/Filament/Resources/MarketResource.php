@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 
 class MarketResource extends Resource
 {
+
     protected static ?string $model = Market::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';

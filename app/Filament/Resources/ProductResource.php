@@ -8,6 +8,7 @@ use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Reservation;
+use Auth;
 use Carbon\Carbon;
 use Filament\Actions\ActionGroup;
 use Filament\Forms;
@@ -17,18 +18,23 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup as ActionsActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use Symfony\Component\Finder\Iterator\DateRangeFilterIterator;
 
 class ProductResource extends Resource
 {
+
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
@@ -127,6 +133,11 @@ class ProductResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                if (!Auth::user()->isSuperAdmin()) {
+                    $query->where('status', 1);
+                }
+            })
             ->columns([
                 Tables\Columns\ImageColumn::make('image'),
 
@@ -139,6 +150,10 @@ class ProductResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sale_limit_overall')
                     ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('remaning_orders')
+                    ->view('tables.columns.product-remining-orders-count')
+                    ->alignCenter()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('commission')
@@ -183,38 +198,39 @@ class ProductResource extends Resource
                 Tables\Columns\IconColumn::make('status')->boolean(),
             ])
             ->filters([
-                Filter::make('created_at')
-                    ->form([
-                        DatePicker::make('created_from')->native(false)->closeOnDateSelection()->placeholder("From Date"),
-                        DatePicker::make('created_until')->native(false)->closeOnDateSelection()->placeholder("To Date"),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['created_from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                            )
-                            ->when(
-                                $data['created_until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                            );
-                    })
-            ])
+                DateRangeFilter::make('created_at')
+                    ->label('Date Range')
+                    ->autoApply(false)
+                    ->displayFormat('d M, Y')
+                    ->format('d M, Y')
+                    ->timezone(env('APP_TIMEZONE'))
+            ], layout: FiltersLayout::AboveContent)
+            ->filtersFormColumns(4)->filtersFormWidth(MaxWidth::FourExtraLarge)
             ->actions([
 
                 Action::make('reserve')
+                    ->hidden(function (Product $product) {
+                        return Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin();
+                    })
                     ->color('info')
                     ->button()
                     ->label('Reserve')
                     ->icon('lucide-alarm-clock')
                     ->action(fn(Product $product) => self::reserveProduct($product)),
-                ActionsActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make(),
-                ])->label('More actions')
-                    ->icon('heroicon-m-ellipsis-vertical')
-                    ->size(ActionSize::Small)
-                    ->color('primary')
+
+                Action::make('reserved')
+                    ->hidden(function (Product $product) {
+                        return !Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin();
+                    })
+                    ->color('secondary')
+                    ->disabled(true)
+                    ->button()
+                    ->label('Reserved')
+                    ->icon('lucide-alarm-clock'),
+                Tables\Actions\ViewAction::make()
+                    ->button()
+                    ->color('primary'),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -253,7 +269,7 @@ class ProductResource extends Resource
 
     public static function reserveProduct(Product $product)
     {
-        $msg = "Reserved Successfully!";
+        $msg = "Product Reserved Successfully!";
         $color = "danger";
         $product = Product::find($product->id);
         if (!$product->status) {
@@ -271,12 +287,14 @@ class ProductResource extends Resource
             $msg = 'Daily sale simit reached';
         }
 
-        $reserved = Reservation::where('product_id', $product->id)->whereTime('reservation_expiry', '>', Carbon::now())->orderBy('reservation_expiry', 'DESC')->get();
+        $reserved = Reservation::where('product_id', $product->id)
+            ->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'))
+            ->orderBy('created_at', 'DESC')->get();
 
         if ($product->sale_limit_per_day > $reserved?->count()) {
             $reserve = new Reservation;
 
-            $reserve->user_id = auth()->user()?->id;
+            $reserve->user_id = Auth::user()?->id;
             $reserve->product_id = $product->id;
             $reserve->reservation_number = sprintf("%02d-%s", $product->id, time());
             $reserve->keywords = $product->keyword;
@@ -288,12 +306,12 @@ class ProductResource extends Resource
             $color = "success";
         } else {
             $now = Carbon::now();
-            $msg = 'This product is already reserved and will be available in <br/> <b>' . Carbon::createFromTimestampMs($now->diffInMilliseconds($reserved[0]?->reservation_expiry))->format('h:m:s') . ' </b>';
+            $msg = 'This product is already reserved and will be available in <br/> <b>' . Carbon::createFromTimestamp($now->diffInMilliseconds($reserved[0]?->reservation_expiry) / 1000)->format('h:m:s') . ' </b>';
         }
 
 
         Notification::make()
-            ->title('Hey ' . auth()->user()?->name)
+            ->title('Hey ' . Auth::user()?->name)
             ->body($msg)
             ->icon('lucide-alarm-clock')
             ->color($color)

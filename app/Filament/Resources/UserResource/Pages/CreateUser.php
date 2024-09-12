@@ -8,5 +8,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateUser extends CreateRecord
 {
+    use \App\Traits\RedirectIndex;
     protected static string $resource = UserResource::class;
 }

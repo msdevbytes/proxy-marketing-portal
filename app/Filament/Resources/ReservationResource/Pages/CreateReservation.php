@@ -9,6 +9,8 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateReservation extends CreateRecord
 {
+    use \App\Traits\RedirectIndex;
+
     protected static string $resource = ReservationResource::class;
 
     protected function mutateFormDataBeforeCreate(array $data): array

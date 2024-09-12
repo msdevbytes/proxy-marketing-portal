@@ -14,9 +14,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Auth;
 
 class ReservationResource extends Resource
 {
+
     protected static ?string $model = Reservation::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-date-range';
@@ -45,7 +47,11 @@ class ReservationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Reservation $q) => $q->whereTime('reservation_expiry', '>', Carbon::now()))
+            ->modifyQueryUsing(function (Builder $query) {
+                if (!Auth::user()->isSuperAdmin()) {
+                    $query->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'));
+                }
+            })
             ->columns([
                 TextColumn::make('reservation_expiry')->view('tables.columns.reservation-timer')->alignCenter(),
                 Tables\Columns\TextColumn::make('reservation_number')

@@ -6,6 +6,8 @@ namespace App\Models;
 
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use App\Enums\Gender;
+use Auth;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -88,5 +90,15 @@ class User extends Authenticatable
     function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
+    }
+
+    function checkProductReservation(int $productID): bool
+    {
+        $p = $this->reservations()
+            ->where('product_id', $productID)
+            ->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'))
+            ->exists();
+
+        return $p;
     }
 }

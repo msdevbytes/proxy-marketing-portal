@@ -3,25 +3,25 @@
 namespace App\Policies;
 
 use Illuminate\Auth\Access\Response;
-use App\Models\Product;
+use App\Models\Market;
 use App\Models\User;
 
-class ProductPolicy
+class MarketPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->checkPermissionTo('view-any Product');
+        return $user->checkPermissionTo('view-any Market');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Product $product): bool
+    public function view(User $user, Market $market): bool
     {
-        return $user->checkPermissionTo('view Product');
+        return $user->checkPermissionTo('view Market');
     }
 
     /**
@@ -29,38 +29,38 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create Product');
+        return $user->checkPermissionTo('create Market');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Product $product): bool
+    public function update(User $user, Market $market): bool
     {
-        return $user->checkPermissionTo('update Product');
+        return $user->checkPermissionTo('update Market');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Product $product): bool
+    public function delete(User $user, Market $market): bool
     {
-        return $user->checkPermissionTo('delete Product');
+        return $user->checkPermissionTo('delete Market');
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Product $product): bool
+    public function restore(User $user, Market $market): bool
     {
-        return $user->checkPermissionTo('restore Product');
+        return $user->checkPermissionTo('restore Market');
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Product $product): bool
+    public function forceDelete(User $user, Market $market): bool
     {
-        return $user->checkPermissionTo('force-delete Product');
+        return $user->checkPermissionTo('force-delete Market');
     }
 }

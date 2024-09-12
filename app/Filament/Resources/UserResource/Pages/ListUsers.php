@@ -21,6 +21,11 @@ class ListUsers extends ListRecords
         ];
     }
 
+    public function table(Table $table): Table
+    {
+        return parent::table($table->defaultSort('created_at', 'desc'));
+    }
+
     public function getTabs(): array
     {
         return [
@@ -30,9 +35,13 @@ class ListUsers extends ListRecords
             'inactive' => Tab::make()
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('status', false)),
             'PM' => Tab::make()
-                ->modifyQueryUsing(fn(Builder $query) => $query->role('PM')),
+                ->modifyQueryUsing(function ($query) {
+                    return $query->role('PM');
+                }),
             'PMM' => Tab::make()
-                ->modifyQueryUsing(fn(Builder $query) => $query->role('PMM')),
+                ->modifyQueryUsing(function ($query) {
+                    return $query->role('PMM');
+                }),
         ];
     }
 }

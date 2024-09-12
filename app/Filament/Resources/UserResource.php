@@ -6,6 +6,7 @@ use App\Enums\Gender;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use Auth;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -13,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 use Phpsa\FilamentPasswordReveal\Password;
@@ -23,6 +25,38 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
+    protected static ?string $navigationGroup = 'User Management';
+
+    public static function canViewAny(): bool
+    {
+        return static::can('viewAny');
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()?->isSuperAdmin();
+    }
+    public static function canEdit(Model $record): bool
+    {
+        return Auth::user()?->isSuperAdmin();
+    }
+
+    public static function canForceDeleteAny(): bool
+    {
+        return Auth::user()?->isSuperAdmin();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isSuperAdmin();
+    }
+
+    public function viewAny(User $user): bool
+    {
+        return Auth::user()?->isSuperAdmin();
+    }
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -31,12 +65,12 @@ class UserResource extends Resource
                 Section::make('User')->schema([
 
                     Forms\Components\Select::make('roles')
-                        ->visible(auth()->user()?->isSuperAdmin())
+                        ->visible(Auth::user()?->isSuperAdmin())
                         ->label('Role')
                         ->placeholder("Select a role")
                         ->selectablePlaceholder(true)
                         ->preload()
-                        ->markAsRequired(auth()->user()?->isSuperAdmin())
+                        ->markAsRequired(Auth::user()?->isSuperAdmin())
                         ->relationship('roles', 'name', fn(Builder $query) =>  $query->where('name', '!=', 'Super Admin'))
                         ->native(false),
                     Forms\Components\TextInput::make('name')
@@ -121,7 +155,9 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(User $user) => $user->withoutRole('Super Admin'))
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->withOutRole('Super Admin');
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),

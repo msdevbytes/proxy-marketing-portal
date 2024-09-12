@@ -8,5 +8,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateCategory extends CreateRecord
 {
+    use \App\Traits\RedirectIndex;
+
     protected static string $resource = CategoryResource::class;
 }

@@ -3,25 +3,25 @@
 namespace App\Policies;
 
 use Illuminate\Auth\Access\Response;
-use App\Models\Product;
+use App\Models\City;
 use App\Models\User;
 
-class ProductPolicy
+class CityPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->checkPermissionTo('view-any Product');
+        return $user->checkPermissionTo('view-any City');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Product $product): bool
+    public function view(User $user, City $city): bool
     {
-        return $user->checkPermissionTo('view Product');
+        return $user->checkPermissionTo('view City');
     }
 
     /**
@@ -29,38 +29,38 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create Product');
+        return $user->checkPermissionTo('create City');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Product $product): bool
+    public function update(User $user, City $city): bool
     {
-        return $user->checkPermissionTo('update Product');
+        return $user->checkPermissionTo('update City');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Product $product): bool
+    public function delete(User $user, City $city): bool
     {
-        return $user->checkPermissionTo('delete Product');
+        return $user->checkPermissionTo('delete City');
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Product $product): bool
+    public function restore(User $user, City $city): bool
     {
-        return $user->checkPermissionTo('restore Product');
+        return $user->checkPermissionTo('restore City');
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Product $product): bool
+    public function forceDelete(User $user, City $city): bool
     {
-        return $user->checkPermissionTo('force-delete Product');
+        return $user->checkPermissionTo('force-delete City');
     }
 }
