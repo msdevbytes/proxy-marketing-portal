@@ -11,6 +11,7 @@ use Auth;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Form;
@@ -26,86 +27,110 @@ class OrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
-    public function deleteAny(): bool
+    public function canCreateAny(): bool
     {
-        return Auth::user()->checkPermissionTo('delete Order');
+        return Auth::user()->isSuperAdmin();
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make('Customer Detail')->schema([
-                    Forms\Components\TextInput::make('customer_email')
-                        ->email()
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('customer_phone_number')
-                        ->regex("/^\+?[0-9]{1,3}?[-.\s]?(\(?\d{1,4}?\)?[-.\s]?)[\d\-.\s]{5,17}$/")->validationMessages(["Please enter a valid phone numbers"])
-                        ->maxLength(255),
-                    Forms\Components\Toggle::make('is_customer_scammer')
-                        ->onColor('danger')
-                        ->required(),
-                ])->columns([
-                    'md' => 3,
-                    'sm' => 1
-                ]),
-                Split::make([
-                    Section::make('Info')->schema([
-                        Forms\Components\TextInput::make('amz_order_number')
-                            ->label('Amazone Order Number')
-                            ->required()
+                Group::make()->schema([
+                    Section::make('Customer Detail')->schema([
+                        Forms\Components\TextInput::make('customer_email')
+                            ->email()
                             ->maxLength(255),
+                        Forms\Components\Toggle::make('is_customer_scammer')
+                            ->onColor('danger')
+                            ->inline(false)
+                            ->required(),
 
-                        Forms\Components\TextInput::make('review_type_commission')
-                            ->required()
-                            ->numeric()
-                            ->default(0.00),
+                    ])->columns([
+                        'md' => 3,
+                        'sm' => 1
+                    ]),
+                    Section::make('Order Detail')->schema([
                         Forms\Components\Select::make("status")
                             ->preload()
                             ->label('Order Status')
                             ->options(function () {
-                                $gender = [];
-                                foreach (OrderStatus::cases() as $case) {
-                                    $gender[$case->value] = $case->value;
+                                $status = [];
+                                foreach (Order::orderStatusByRole() as $case) {
+                                    $status[$case] = $case;
                                 }
-                                return $gender;
-                            })->native(false),
 
+                                return $status;
+                            })->native(false),
+                        Forms\Components\TextInput::make('amz_order_number')
+                            ->label('Amazone Order Number')
+                            ->required()
+                            ->maxLength(255),
                         Forms\Components\TextInput::make('review_link')
                             ->url()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('remarks')
-                            ->columnSpanFull(),
-                        Forms\Components\Select::make('user_id')
-                            ->relationship('user', 'name', fn(User $user) => $user->withoutRole('Super Admin'))
-                            ->preload()
-                            ->native(false)
-                            ->searchable()
-                            ->required(),
-                        Forms\Components\Select::make('market_id')
-                            ->preload()
-                            ->native(false)
-                            ->searchable()
-                            ->required()
-                            ->relationship('market', titleAttribute: 'market'),
-                        Forms\Components\Select::make('product_id')
-                            ->preload()
-                            ->native(false)
-                            ->searchable()
-                            ->required()
-                            ->relationship('product', titleAttribute: 'name'),
+                            ->columnSpanFull()->rows(3),
+                    ])->columns([
+                        'md' => 3,
+                        'sm' => 1
                     ]),
                     Section::make('Images')->schema([
                         Forms\Components\FileUpload::make('invoice_image')
                             ->image(),
                         Forms\Components\FileUpload::make('review_image')
                             ->image(),
-                        Forms\Components\FileUpload::make('refund_image')
-                            ->image(),
                         Forms\Components\FileUpload::make('buyer_verification_image')
                             ->image(),
-                    ]),
-                ])->from('md'),
+                    ])->columns(3),
+                ])->visible(Auth::user()->isPM()),
+                Group::make()->schema([
+                    Split::make([
+                        Section::make('Info')->schema([
+                            Forms\Components\TextInput::make('amz_order_number')
+                                ->label('Amazone Order Number')
+                                ->required()
+                                ->maxLength(255),
+
+                            Forms\Components\TextInput::make('review_type_commission')
+                                ->required()
+                                ->numeric()
+                                ->default(0.00),
+                            Forms\Components\Select::make("status")
+                                ->preload()
+                                ->label('Order Status')
+                                ->options(function () {
+                                    $status = [];
+                                    foreach (Order::orderStatusByRole() as $case) {
+                                        $status[$case] = $case;
+                                    }
+
+                                    return $status;
+                                })->native(false),
+
+                            Forms\Components\Textarea::make('remarks')
+                                ->columnSpanFull(),
+                            Forms\Components\Select::make('user_id')
+                                ->relationship('user', 'name', fn(User $user) => $user->withoutRole('Super Admin'))
+                                ->preload()
+                                ->native(false)
+                                ->searchable()
+                                ->required()->visible(Auth::user()->isSuperAdmin()),
+                            Hidden::make('product_id')->default(request()->get('product_id'))->visible(request()->get('product_id') != null),
+                            Forms\Components\Select::make('product_id')
+                                ->preload()
+                                ->native(false)
+                                ->searchable()
+                                ->required()
+                                ->relationship('product', titleAttribute: 'name')
+                                ->visible(request()->get('product_id') == null),
+                        ]),
+                        Section::make('Images')->schema([
+                            Forms\Components\FileUpload::make('refund_image')
+                                ->image(),
+                        ]),
+                    ])->from('md'),
+                ])->visible(Auth::user()->isPMM()),
 
 
             ])->columns(1);

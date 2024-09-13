@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\OrderStatus;
+use Auth;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -48,5 +49,32 @@ class Order extends Pivot
     function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+
+    public static function orderStatusByRole(): array
+    {
+        $status = [];
+        $rolesBaseStatus = collect([
+            'PM' => [
+                OrderStatus::ORDERED->value,
+                OrderStatus::CANCELLED->value,
+                OrderStatus::REVIEWED->value
+            ],
+            'PMM' => [
+                OrderStatus::REFUNDED->value,
+                OrderStatus::DELIVERED->value,
+                OrderStatus::ONHOLD->value,
+                OrderStatus::CANCELLED->value
+            ]
+
+        ]);
+
+        foreach (OrderStatus::cases() as $case) {
+            if (in_array($case->value, $rolesBaseStatus->get(Auth::user()->getRoleNames()[0]))) {
+                $status[$case->value] = $case->value;
+            }
+        }
+        return $status;
     }
 }

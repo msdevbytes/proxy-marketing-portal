@@ -67,6 +67,15 @@ class User extends Authenticatable
         ];
     }
 
+    public function isPM(): bool
+    {
+        return $this->hasRole('PM');
+    }
+
+    public function isPMM(): bool
+    {
+        return $this->hasRole('PMM');
+    }
 
     function city(): BelongsTo
     {
@@ -94,11 +103,9 @@ class User extends Authenticatable
 
     function checkProductReservation(int $productID): bool
     {
-        $p = $this->reservations()
+        return $this->reservations()
             ->where('product_id', $productID)
             ->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'))
             ->exists();
-
-        return $p;
     }
 }

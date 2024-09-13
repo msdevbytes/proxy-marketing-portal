@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use Symfony\Component\Finder\Iterator\DateRangeFilterIterator;
+use Webbingbrasil\FilamentCopyActions\Tables\Actions\CopyAction;
 
 class ProductResource extends Resource
 {
@@ -141,6 +142,9 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image'),
 
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('seller')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('market.name')
@@ -207,7 +211,24 @@ class ProductResource extends Resource
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4)->filtersFormWidth(MaxWidth::FourExtraLarge)
             ->actions([
-
+                CopyAction::make('Copy')->copyable(function ($record) {
+                    return sprintf(
+                        '
+                        Product ID: %s
+                        Product Name: %s
+                        Product Brand: %s
+                        Product Link: %s
+                        Amazone Sold by: %s
+                        Amazone Keyword: %s
+                    ',
+                        nl2br($record->id),
+                        nl2br($record->name),
+                        nl2br($record->product_brand),
+                        nl2br($record->product_link),
+                        nl2br($record->seller),
+                        nl2br($record->keyword)
+                    );
+                })->button()->color('success'),
                 Action::make('reserve')
                     ->hidden(function (Product $product) {
                         return Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin();
@@ -218,14 +239,13 @@ class ProductResource extends Resource
                     ->icon('lucide-alarm-clock')
                     ->action(fn(Product $product) => self::reserveProduct($product)),
 
-                Action::make('reserved')
+                Action::make('danger')
                     ->hidden(function (Product $product) {
                         return !Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin();
                     })
-                    ->color('secondary')
-                    ->disabled(true)
+                    ->color('primary')
                     ->button()
-                    ->label('Reserved')
+                    ->label('Release')
                     ->icon('lucide-alarm-clock'),
                 Tables\Actions\ViewAction::make()
                     ->button()

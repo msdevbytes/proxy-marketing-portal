@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\OrderStatus;
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
+use App\Models\Order;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -15,6 +17,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Auth;
+use Filament\Forms\Components\Section;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
 
 class ReservationResource extends Resource
 {
@@ -82,7 +87,10 @@ class ReservationResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
+                Action::make('createOrder')
+                    ->url(fn(Reservation $record): string => route('filament.admin.resources.orders.create', ['product_id' => $record->product_id]))
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
