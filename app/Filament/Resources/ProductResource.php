@@ -136,7 +136,7 @@ class ProductResource extends Resource
         return $table
             ->modifyQueryUsing(function (Builder $query) {
                 if (!Auth::user()->isSuperAdmin()) {
-                    $query->where('status', 1);
+                    $query->where('status', 1)->whereDate('marketing_end_date', '>=', Carbon::now());
                 }
             })
             ->columns([
@@ -179,7 +179,7 @@ class ProductResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('marketing_end_date')
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
@@ -231,7 +231,7 @@ class ProductResource extends Resource
                 })->button()->color('success'),
                 Action::make('reserve')
                     ->hidden(function (Product $product) {
-                        return Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin();
+                        return (Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin() || $product->isMarketingDateEnd());
                     })
                     ->color('info')
                     ->button()
@@ -241,12 +241,13 @@ class ProductResource extends Resource
 
                 Action::make('danger')
                     ->hidden(function (Product $product) {
-                        return !Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin();
+                        return (!Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin()  || $product->isMarketingDateEnd());
                     })
-                    ->color('primary')
+                    ->color('danger')
                     ->button()
                     ->label('Release')
-                    ->icon('lucide-alarm-clock'),
+                    ->icon('lucide-alarm-clock')
+                    ->action(fn(Product $product) => self::releaseProdct($product)),
                 Tables\Actions\ViewAction::make()
                     ->button()
                     ->color('primary'),
@@ -287,13 +288,29 @@ class ProductResource extends Resource
             ]);
     }
 
+    public static function releaseProdct(Product $product)
+    {
+        if (Auth::user()->isSuperAdmin()) {
+            Reservation::where('product_id', $product->id)
+                ->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'))->delete();
+        } else {
+            Auth::user()->reservations()->where('product_id', $product->id)->delete();
+        }
+        Notification::make()
+            ->title('Hey ' . Auth::user()?->name)
+            ->body("Product Released")
+            ->icon('lucide-alarm-clock')
+            ->color("success")
+            ->send();
+    }
+
     public static function reserveProduct(Product $product)
     {
         $msg = "Product Reserved Successfully!";
         $color = "danger";
         $product = Product::find($product->id);
-        if (!$product->status) {
-            $msg = 'not enable';
+        if (!$product->status && $product->isMarketingDateEnd()) {
+            $msg = 'Product may not enabled or the marketing date is end';
         }
 
         $saleLImit = Order::where([['product_id', $product->id], ['status', OrderStatus::ORDERED->value]])->count();

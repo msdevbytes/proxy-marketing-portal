@@ -45,10 +45,12 @@ class Product extends Model
     protected $casts = [
         "status" => "boolean",
         "keyword" => "array",
+        'marketing_end_date' => 'date'
     ];
 
     protected $dates = [
         'created_at',
+        'marketing_end_date'
     ];
 
     protected $appends = ['reservation_time'];
@@ -56,6 +58,11 @@ class Product extends Model
     static function keywordSeparator(): string
     {
         return ',';
+    }
+
+    function isMarketingDateEnd(): bool
+    {
+        return !$this->marketing_end_date->gte(Carbon::now()->toDateString());
     }
 
     public function getReservationTimeAttribute()
@@ -93,4 +100,22 @@ class Product extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    function isOrderOverAllLimitFulfilled(): bool
+    {
+        return $this->orders()->where('orders.status', '!=', OrderStatus::CANCELLED)->count() < $this->sale_limit_overall;
+    }
+
+    function isOrderDailyLimitFulfilled(): bool
+    {
+        return $this->orders()->where('orders.status', '!=', OrderStatus::CANCELLED)->whereRaw('DATE(orders.created_at) = DATE(?)', Carbon::now())->count() < $this->sale_limit_per_day;
+    }
+
+
+    /**
+     * 1. If this product is not reserved by any user then reserve this product
+     * 2. If this product is reserved by another user then return error
+     * 3. if this product is reserved by current user then show release product
+     * 4. if the overall/daily sale limit is fullfulled then don't show any action
+     * */
 }
