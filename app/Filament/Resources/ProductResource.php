@@ -74,7 +74,7 @@ class ProductResource extends Resource
                     Forms\Components\DatePicker::make('marketing_end_date')
                         ->displayFormat("M d, Y")
                         ->required()
-                        ->timezone('Asia/Karachi')
+                        ->timezone(env('APP_TIMEZONE'))
                         ->minDate(now())
                         ->closeOnDateSelection()
                         ->native(false)->placeholder("Select Date"),

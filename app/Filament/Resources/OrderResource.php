@@ -20,6 +20,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Infolists;
+use Filament\Infolists\Components\Section as ComponentsSection;
+use Filament\Infolists\Infolist;
 
 class OrderResource extends Resource
 {
@@ -51,6 +54,14 @@ class OrderResource extends Resource
                         'sm' => 1
                     ]),
                     Section::make('Order Detail')->schema([
+                        Hidden::make('product_id')->default(request()->get('product_id'))->visible(request()->get('product_id') != null),
+                        Forms\Components\Select::make('product_id')
+                            ->preload()
+                            ->native(false)
+                            ->searchable()
+                            ->required()
+                            ->relationship('product', titleAttribute: 'name')
+                            ->visible(request()->get('product_id') == null),
                         Forms\Components\Select::make("status")
                             ->preload()
                             ->label('Order Status')
@@ -116,14 +127,7 @@ class OrderResource extends Resource
                                 ->native(false)
                                 ->searchable()
                                 ->required()->visible(Auth::user()->isSuperAdmin()),
-                            Hidden::make('product_id')->default(request()->get('product_id'))->visible(request()->get('product_id') != null),
-                            Forms\Components\Select::make('product_id')
-                                ->preload()
-                                ->native(false)
-                                ->searchable()
-                                ->required()
-                                ->relationship('product', titleAttribute: 'name')
-                                ->visible(request()->get('product_id') == null),
+
                         ]),
                         Section::make('Images')->schema([
                             Forms\Components\FileUpload::make('refund_image')
@@ -186,6 +190,7 @@ class OrderResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -199,6 +204,31 @@ class OrderResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\TextEntry::make('amz_order_number'),
+                Infolists\Components\TextEntry::make('customer_email'),
+                Infolists\Components\TextEntry::make('customer_phone_number'),
+                Infolists\Components\TextEntry::make('is_customer_scammer')->badge(),
+                Infolists\Components\TextEntry::make('review_type_commission'),
+                Infolists\Components\TextEntry::make('status'),
+                Infolists\Components\TextEntry::make('review_link'),
+                Infolists\Components\TextEntry::make('market_id'),
+                Infolists\Components\TextEntry::make('user.email'),
+                Infolists\Components\TextEntry::make('product_id'),
+                Infolists\Components\TextEntry::make('remarks')->columnSpanFull(),
+
+                ComponentsSection::make('Images')->schema([
+                    Infolists\Components\ImageEntry::make('invoice_image'),
+                    Infolists\Components\ImageEntry::make('review_image'),
+                    Infolists\Components\ImageEntry::make('buyer_verification_image'),
+                    Infolists\Components\ImageEntry::make('refund_image'),
+                ])->columns(4),
+            ]);
     }
 
     public static function getPages(): array
