@@ -54,14 +54,14 @@ class OrderResource extends Resource
                         'sm' => 1
                     ]),
                     Section::make('Order Detail')->schema([
-                        Hidden::make('product_id')->default(request()->get('product_id'))->hidden(!(request()->get('product_id') != null)),
-                        Forms\Components\Select::make('product_id')
-                            ->preload()
-                            ->native(false)
-                            ->searchable()
-                            ->required()
-                            ->relationship('product', titleAttribute: 'name')
-                            ->hidden(!(request()->get('product_id') == null)),
+                        Hidden::make('product_id')->default(request()->get('product_id')),
+                        // Forms\Components\Select::make('product_id')
+                        //     ->preload()
+                        //     ->native(false)
+                        //     ->searchable()
+                        //     ->required()
+                        //     ->relationship('product', titleAttribute: 'name')
+                        //     ->hidden(!(request()->get('product_id') == null)),
                         Forms\Components\Select::make("status")
                             ->preload()
                             ->label('Order Status')
