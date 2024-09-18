@@ -57,6 +57,8 @@ class ProductResource extends Resource
                             ->inline(false),
                         Forms\Components\TextInput::make('product_brand')
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('name')
+                            ->maxLength(255),
                         Forms\Components\TagsInput::make('keyword')->separator(Product::keywordSeparator())->color('info'),
                         Forms\Components\TextInput::make('amz_sold_by')
                             ->maxLength(255),
