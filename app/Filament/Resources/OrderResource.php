@@ -54,7 +54,14 @@ class OrderResource extends Resource
                         'sm' => 1
                     ]),
                     Section::make('Order Detail')->schema([
-                        Hidden::make('product_id')->default(request()->get('product_id'))->visible(request()->get('product_id') != null),
+                        Hidden::make('product_id')->default(request()->get('product_id'))->hidden(!(request()->get('product_id') != null)),
+                        Forms\Components\Select::make('product_id')
+                            ->preload()
+                            ->native(false)
+                            ->searchable()
+                            ->required()
+                            ->relationship('product', titleAttribute: 'name')
+                            ->hidden(!(request()->get('product_id') == null)),
                         Forms\Components\Select::make("status")
                             ->preload()
                             ->label('Order Status')
@@ -86,6 +93,7 @@ class OrderResource extends Resource
                             ->image(),
                         Forms\Components\FileUpload::make('refund_image')
                             ->image(),
+
                     ])->columns(3),
                 ])->visible(Auth::user()->isPM()),
                 Group::make()->schema([
@@ -114,12 +122,17 @@ class OrderResource extends Resource
 
                             Forms\Components\Textarea::make('remarks')
                                 ->columnSpanFull(),
+                            Forms\Components\Select::make('user_id')
+                                ->relationship('user', 'name', fn(User $user) => $user->withoutRole('Super Admin'))
+                                ->preload()
+                                ->native(false)
+                                ->searchable()
+                                ->required()->visible(Auth::user()->isSuperAdmin()),
 
                         ]),
                         Section::make('Images')->schema([
                             Forms\Components\FileUpload::make('buyer_verification_image')
                                 ->image(),
-
                         ]),
                     ])->from('md'),
                 ])->visible(Auth::user()->isPMM()),
@@ -153,7 +166,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('market.id')
+                Tables\Columns\TextColumn::make('market.market')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('product.name')

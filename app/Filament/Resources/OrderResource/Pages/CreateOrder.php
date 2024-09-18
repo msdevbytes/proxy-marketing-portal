@@ -4,6 +4,7 @@ namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Enums\OrderStatus;
 use App\Filament\Resources\OrderResource;
+use App\Models\Product;
 use Auth;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -18,7 +19,7 @@ class CreateOrder extends CreateRecord
     {
         $data['status'] = $data['status'] ?? OrderStatus::ORDERED;
         $data['user_id'] = $data['user_id'] ?? Auth::user()->id;
-
+        $data['market_id'] = Product::where('id', $data['product_id'])->first()->market_id;
         return parent::mutateFormDataBeforeCreate($data);
     }
 
