@@ -8,6 +8,7 @@ use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Reservation;
+use App\Models\User;
 use Auth;
 use Carbon\Carbon;
 use Filament\Actions\ActionGroup;
@@ -26,6 +27,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -51,6 +53,7 @@ class ProductResource extends Resource
             ->schema([
 
                 Section::make("General Info")
+
                     ->schema([
                         Forms\Components\Toggle::make('status')
                             ->default(true)
@@ -149,34 +152,36 @@ class ProductResource extends Resource
                 }
             })
             ->columns([
-                Tables\Columns\ImageColumn::make('image'),
 
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
 
-                Tables\Columns\TextColumn::make('seller')
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Seller Name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('market.name')
+                Tables\Columns\TextColumn::make('market.market')
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('sale_limit_per_day')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('sale_limit_overall')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('remaning_orders')
                     ->view('tables.columns.product-remining-orders-count')
                     ->alignCenter()
                     ->sortable(),
-
                 Tables\Columns\TextColumn::make('commission')
                     ->money('PKR', locale: 'Rs')
-                    ->sortable(),
+                    ->sortable()->searchable(),
+
+
+
                 Tables\Columns\TextColumn::make('keyword')
                     ->color('primary')
                     ->separator(',')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('id')->label('Product ID'),
+                Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\IconColumn::make('is_expensive')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->boolean(),
@@ -211,33 +216,16 @@ class ProductResource extends Resource
                 Tables\Columns\IconColumn::make('status')->boolean(),
             ])
             ->filters([
+                SelectFilter::make('users')->label('PMMs')->relationship('user', 'name', function (User $user) {
+                    return $user->role('PMM');
+                })->native(false)->searchable()->preload()->hidden(Auth::user()->isPMM()),
                 DateRangeFilter::make('created_at')
                     ->label('Date Range')
                     ->autoApply(false)
-                    ->displayFormat('d M, Y')
-                    ->format('d M, Y')
                     ->timezone(env('APP_TIMEZONE'))
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4)->filtersFormWidth(MaxWidth::FourExtraLarge)
             ->actions([
-                CopyAction::make('Copy')->copyable(function ($record) {
-                    return sprintf(
-                        '
-                        Product ID: %s
-                        Product Name: %s
-                        Product Brand: %s
-                        Product Link: %s
-                        Amazone Sold by: %s
-                        Amazone Keyword: %s
-                    ',
-                        nl2br($record->id),
-                        nl2br($record->name),
-                        nl2br($record->product_brand),
-                        nl2br($record->product_link),
-                        nl2br($record->seller),
-                        nl2br($record->keyword)
-                    );
-                })->button()->color('success'),
                 Action::make('reserve')
                     ->hidden(function (Product $product) {
                         return (Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin() || $product->isProductDisabledOrMarketingEnd());

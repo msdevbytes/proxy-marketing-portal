@@ -8,6 +8,7 @@ use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
 use App\Models\User;
 use Auth;
+use BladeUI\Icons\Components\Icon;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
@@ -23,6 +24,11 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Infolists;
 use Filament\Infolists\Components\Section as ComponentsSection;
 use Filament\Infolists\Infolist;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class OrderResource extends Resource
 {
@@ -153,49 +159,61 @@ class OrderResource extends Resource
                 }
             })
             ->columns([
-                Tables\Columns\ImageColumn::make('invoice_image'),
-                Tables\Columns\TextColumn::make('amz_order_number')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('customer_email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('customer_phone_number')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_customer_scammer')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('review_type_commission')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('id')->label('Order ID'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
-                Tables\Columns\ImageColumn::make('review_image'),
-                Tables\Columns\ImageColumn::make('refund_image'),
-                Tables\Columns\ImageColumn::make('buyer_verification_image'),
-                Tables\Columns\TextColumn::make('review_link')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
+                IconColumn::make('user')->icon('tni-whatsapp')->color('success'),
+                Tables\Columns\TextColumn::make('amz_order_number')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('product.id')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('customer_email')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('market.market')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('product.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
-                    ->sortable()
+                    ->sortable()->label('Created/Modified Date'),
+                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\ImageColumn::make('invoice_image'),
+                Tables\Columns\IconColumn::make('is_customer_scammer')
+                    ->boolean()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('review_type_commission')
+                    ->numeric()
+                    ->sortable()->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\ImageColumn::make('review_image')
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ImageColumn::make('refund_image')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ImageColumn::make('buyer_verification_image')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('review_link')
+                    ->searchable()->toggleable(isToggledHiddenByDefault: true),
+
+
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
-            ])
+                SelectFilter::make('users')->label('PMs')->relationship('user', 'name', function (User $user) {
+                    return $user->role('PMM');
+                })->hidden(Auth::user()->isPMM()),
+                SelectFilter::make('market')->relationship('market', 'market'),
+                DateRangeFilter::make('created_at')
+                    ->label('Date Range')
+                    ->autoApply(false)
+                    ->timezone(env('APP_TIMEZONE'))
+            ], layout: FiltersLayout::AboveContent)
+            ->filtersFormColumns(4)->filtersFormWidth(MaxWidth::FourExtraLarge)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -219,9 +237,14 @@ class OrderResource extends Resource
     {
         return $infolist
             ->schema([
+                Infolists\Components\Actions::make([
+                    Infolists\Components\Actions\Action::make('edit')
+                        ->action(function (Order $order) {
+                            return redirect()->route('filament.admin.resources.orders.edit', $order->id);
+                        })
+                ])->columnSpanFull()->alignRight(),
                 Infolists\Components\TextEntry::make('amz_order_number'),
                 Infolists\Components\TextEntry::make('customer_email'),
-                Infolists\Components\TextEntry::make('customer_phone_number'),
                 Infolists\Components\TextEntry::make('is_customer_scammer')->badge(),
                 Infolists\Components\TextEntry::make('review_type_commission'),
                 Infolists\Components\TextEntry::make('status'),
