@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -96,6 +97,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
+    function pmmOrders(): HasManyThrough
+    {
+        return $this->hasManyThrough(Product::class, Order::class);
+    }
+
     function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);

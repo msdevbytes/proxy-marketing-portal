@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Reservation extends Pivot
+class Reservation extends Model
 {
+
     protected $fillable = [
         'reservation_number',
         'keywords',

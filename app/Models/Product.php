@@ -17,6 +17,7 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        "user_id",
         "name",
         "image",
         "amazone_image",
@@ -60,9 +61,9 @@ class Product extends Model
         return ',';
     }
 
-    function isMarketingDateEnd(): bool
+    function isProductDisabledOrMarketingEnd(): bool
     {
-        return !$this->marketing_end_date->gte(Carbon::now()->toDateString());
+        return !$this->marketing_end_date->gte(Carbon::now()->toDateString()) || !$this->status;
     }
 
     public function getReservationTimeAttribute()
@@ -94,6 +95,11 @@ class Product extends Model
     function market(): BelongsTo
     {
         return $this->belongsTo(Market::class);
+    }
+
+    function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     function orders(): HasMany

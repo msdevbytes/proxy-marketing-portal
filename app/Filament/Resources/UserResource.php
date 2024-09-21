@@ -135,6 +135,7 @@ class UserResource extends Resource
                         ->required()
                         ->maxLength(255),
                     Password::make('password')
+                        ->default('Secret@123')
                         ->autocomplete('new-password')
                         ->password(true)
                         ->revealable(true)

@@ -28,6 +28,7 @@ class ReservationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-date-range';
 
+
     public static function form(Form $form): Form
     {
         return $form
@@ -53,7 +54,10 @@ class ReservationResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (!Auth::user()->isSuperAdmin()) {
+                if (Auth::user()->isPMM()) {
+                    $query->join('products', 'products.id', '=', 'reservations.product_id')
+                        ->where('products.user_id', Auth::user()->id)->select('reservations.*');
+                } else if (!Auth::user()->isSuperAdmin()) {
                     $query->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'));
                 }
             })
@@ -89,6 +93,7 @@ class ReservationResource extends Resource
             ->actions([
                 // Tables\Actions\EditAction::make(),
                 Action::make('createOrder')
+                    ->hidden(!Auth::user()->isPM())
                     ->url(fn(Reservation $record): string => route('filament.admin.resources.orders.create', ['product_id' => $record->product_id]))
 
             ])

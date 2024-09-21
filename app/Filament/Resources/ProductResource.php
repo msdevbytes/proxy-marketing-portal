@@ -36,9 +36,14 @@ use Webbingbrasil\FilamentCopyActions\Tables\Actions\CopyAction;
 class ProductResource extends Resource
 {
 
+    protected static ?string $label = "All Products";
+
+    protected static ?string $navigationGroup = "Products";
+
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
+
 
     public static function form(Form $form): Form
     {
@@ -137,7 +142,9 @@ class ProductResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (!Auth::user()->isSuperAdmin()) {
+                if (Auth::user()->isPMM()) {
+                    $query->where('user_id', Auth::user()?->id);
+                } else if (!Auth::user()->isSuperAdmin()) {
                     $query->where('status', 1)->whereDate('marketing_end_date', '>=', Carbon::now());
                 }
             })
@@ -233,7 +240,7 @@ class ProductResource extends Resource
                 })->button()->color('success'),
                 Action::make('reserve')
                     ->hidden(function (Product $product) {
-                        return (Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin() || $product->isMarketingDateEnd());
+                        return (Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin() || $product->isProductDisabledOrMarketingEnd());
                     })
                     ->color('info')
                     ->button()
@@ -243,7 +250,7 @@ class ProductResource extends Resource
 
                 Action::make('danger')
                     ->hidden(function (Product $product) {
-                        return (!Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin()  || $product->isMarketingDateEnd());
+                        return (!Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin()  || $product->isProductDisabledOrMarketingEnd());
                     })
                     ->color('danger')
                     ->button()
@@ -311,7 +318,7 @@ class ProductResource extends Resource
         $msg = "Product Reserved Successfully!";
         $color = "danger";
         $product = Product::find($product->id);
-        if (!$product->status && $product->isMarketingDateEnd()) {
+        if (!$product->status && $product->isProductDisabledOrMarketingEnd()) {
             $msg = 'Product may not enabled or the marketing date is end';
         }
 

@@ -3,10 +3,13 @@
 namespace App\Providers\Filament;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use App\Models\Product;
 use Auth;
+use Carbon\Carbon;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -41,6 +44,22 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
                 \Hasnayeen\Themes\ThemesPlugin::make()
+            ])
+            ->navigationItems([
+                NavigationItem::make('Create Product')
+                    ->group('Products')
+                    ->icon('lucide-plus')
+                    ->url('/admin/products/create')
+                    ->sort(1)
+                    ->hidden(fn() => Auth::user()->isPM())
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.products.create')),
+                NavigationItem::make('All Products')
+                    ->group('Products')
+                    ->icon('lucide-layers')
+                    ->url('/admin/products')
+                    ->badge(fn() => (Auth::user()->isPMM() ? Auth::user()->products()->where('products.status', 1)->whereDate('marketing_end_date', '>=', Carbon::now())->count() : null))
+                    ->sort(0)
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.products.index'))
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

@@ -144,6 +144,14 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                if (Auth::user()->isPMM()) {
+                    $query->join('products', 'products.id', '=', 'orders.product_id')
+                        ->where('products.user_id', Auth::user()->id)->select('orders.*');
+                } else if (Auth::user()->isPM()) {
+                    $query->where('user_id', Auth::user()->id);
+                }
+            })
             ->columns([
                 Tables\Columns\ImageColumn::make('invoice_image'),
                 Tables\Columns\TextColumn::make('amz_order_number')
