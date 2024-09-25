@@ -5,7 +5,9 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Enums\OrderStatus;
 use App\Filament\Resources\OrderResource;
 use App\Models\Product;
+use App\Models\Reservation;
 use Auth;
+use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -23,6 +25,12 @@ class CreateOrder extends CreateRecord
         return parent::mutateFormDataBeforeCreate($data);
     }
 
+
+    protected function afterCreate(): void
+    {
+        Reservation::where([['product_id', $this->data['product_id']], ['user_id', Auth::useR()?->id]])
+            ->update(['status' => 1, 'reservation_expiry' => Carbon::now()->subHours(2)]);
+    }
 
     protected function beforeCreate(): void
     {

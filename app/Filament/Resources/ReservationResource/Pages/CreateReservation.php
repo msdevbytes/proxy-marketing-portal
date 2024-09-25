@@ -16,7 +16,7 @@ class CreateReservation extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['reservation_expiry'] = Carbon::now()->addHours(2);
-
+        $data['status'] = 0;
         return parent::mutateFormDataBeforeCreate($data);
     }
 }

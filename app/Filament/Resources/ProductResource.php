@@ -310,18 +310,18 @@ class ProductResource extends Resource
             $msg = 'Product may not enabled or the marketing date is end';
         }
 
-        $saleLImit = Order::where([['product_id', $product->id], ['status', OrderStatus::ORDERED->value]])->count();
+        $saleLImit = Order::where([['product_id', $product->id], ['status', '!=', OrderStatus::CANCELLED->value]])->count();
 
         if ($product->sale_limit_overall == $saleLImit) {
             $msg = 'Sale limit reached';
         }
 
-        $dailySaleLImit = Order::where([['product_id', $product->id], ['status', OrderStatus::ORDERED->value]])->groupBy('created_at')->count();
+        $dailySaleLImit = Order::where([['product_id', $product->id], ['status', '!=', OrderStatus::CANCELLED->value]])->groupBy('created_at')->count();
         if ($dailySaleLImit == $product->sale_limit_per_day) {
             $msg = 'Daily sale simit reached';
         }
 
-        $reserved = Reservation::where('product_id', $product->id)
+        $reserved = Reservation::where([['product_id', $product->id], ['status', 0]])
             ->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'))
             ->orderBy('created_at', 'DESC')->get();
 
@@ -333,7 +333,7 @@ class ProductResource extends Resource
             $reserve->reservation_number = sprintf("%02d-%s", $product->id, time());
             $reserve->keywords = $product->keyword;
             $reserve->market_id = $product->market_id;
-            $reserve->status = 1;
+            $reserve->status = 0;
             $reserve->reservation_expiry = Carbon::now()->addHours(2);
 
             $reserve->save();

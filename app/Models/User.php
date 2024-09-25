@@ -111,7 +111,7 @@ class User extends Authenticatable
     function checkProductReservation(int $productID): bool
     {
         return $this->reservations()
-            ->where('product_id', $productID)
+            ->where([['product_id', $productID], ['status', 0]])
             ->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'))
             ->exists();
     }
