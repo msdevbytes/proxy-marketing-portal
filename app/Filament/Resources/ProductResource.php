@@ -144,6 +144,7 @@ class ProductResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchPlaceholder("Search Everything....")
             ->modifyQueryUsing(function (Builder $query) {
                 if (Auth::user()->isPMM()) {
                     $query->where('user_id', Auth::user()?->id);
@@ -162,25 +163,22 @@ class ProductResource extends Resource
 
                 Tables\Columns\TextColumn::make('sale_limit_per_day')
                     ->numeric()
-                    ->sortable()->searchable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('sale_limit_overall')
                     ->numeric()
-                    ->sortable()->searchable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('remaning_orders')
                     ->view('tables.columns.product-remining-orders-count')
                     ->alignCenter()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('commission')
                     ->money('PKR', locale: 'Rs')
-                    ->sortable()->searchable(),
-
-
-
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('keyword')
                     ->color('primary')
                     ->separator(',')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('id')->label('Product ID'),
+                Tables\Columns\TextColumn::make('id')->label('Product ID')->searchable(),
                 Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\IconColumn::make('is_expensive')
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -199,6 +197,7 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('category.name')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->numeric()
+                    ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('deleted_at')
@@ -207,6 +206,7 @@ class ProductResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
+                    ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')

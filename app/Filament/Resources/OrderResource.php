@@ -29,6 +29,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use Webbingbrasil\FilamentCopyActions\Pages\Actions\CopyAction;
 
 class OrderResource extends Resource
 {
@@ -165,7 +166,7 @@ class OrderResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()->searchable(),
                 IconColumn::make('user')->icon('tni-whatsapp')->color('success'),
                 Tables\Columns\TextColumn::make('amz_order_number')
                     ->searchable(),
@@ -235,13 +236,22 @@ class OrderResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
+
         return $infolist
             ->schema([
                 Infolists\Components\Actions::make([
                     Infolists\Components\Actions\Action::make('edit')
                         ->action(function (Order $order) {
                             return redirect()->route('filament.admin.resources.orders.edit', $order->id);
-                        })
+                        }),
+                    Infolists\Components\Actions\Action::make('Copy')
+                        ->alpineClickHandler(fn(Order $order) => '
+                    window.navigator.clipboard.writeText("' . implode(', ', ['amz_order_number' => $order->amz_order_number, 'customer_email' => $order->customer_email]) . '");
+                    $tooltip(\'Copied\', {
+                        theme: $store.theme,
+                        timeout: 2000,
+                    })
+                ')
                 ])->columnSpanFull()->alignRight(),
                 Infolists\Components\TextEntry::make('amz_order_number'),
                 Infolists\Components\TextEntry::make('customer_email'),
