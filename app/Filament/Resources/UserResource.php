@@ -101,6 +101,20 @@ class UserResource extends Resource
                         ->native(false),
                     Forms\Components\Toggle::make('status')
                         ->required()->inline(false)->offColor("danger")->onColor("success")->default(true),
+                    Forms\Components\DatePicker::make('email_verified_at')
+                        ->displayFormat("M d, Y")
+                        ->required()
+                        ->timezone(env('APP_TIMEZONE'))
+                        ->maxDate(now())
+                        ->closeOnDateSelection()
+                        ->native(false)->placeholder("Select Date"),
+                    Forms\Components\DatePicker::make('acc_deactive_at')
+                        ->displayFormat("M d, Y")
+                        ->required()
+                        ->timezone(env('APP_TIMEZONE'))
+                        ->minDate(now()->subDay())
+                        ->closeOnDateSelection()
+                        ->native(false)->placeholder("Select Date"),
                 ])->columns([
                     'md' => 3,
                     'sm' => 1

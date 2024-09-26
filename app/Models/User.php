@@ -8,6 +8,7 @@ use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use App\Enums\Gender;
 use Auth;
 use Carbon\Carbon;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,8 +16,9 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasRoles, HasSuperAdmin, HasFactory, Notifiable;
 
@@ -28,11 +30,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'phone_number',
+        'password',
         'cnic',
+        'phone_number',
         'gender',
         'address',
-        'password',
         'image',
         'cnic_image',
         'bank_account_name',
@@ -40,7 +42,8 @@ class User extends Authenticatable
         'bank_account_city_id',
         'city_id',
         'status',
-        'acc_deactive_at'
+        'acc_deactive_at',
+        'email_verified_at',
     ];
 
     /**
@@ -66,6 +69,14 @@ class User extends Authenticatable
             'password' => 'hashed',
             'gender' => Gender::class
         ];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if ($this->status == 0) {
+            Auth::logout();
+        }
+        return $this->status == 1;
     }
 
     public function isPM(): bool
