@@ -25,7 +25,12 @@ class MarketResource extends Resource
 
     public static function canDeleteAny(): bool
     {
-        return Auth::user()->checkPermissionTo('delete Product');
+        return Auth::user()->checkPermissionTo('delete Market (web)');
+    }
+
+    public static function canForceDeleteAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('force-delete Market (web)');
     }
 
     public static function form(Form $form): Form

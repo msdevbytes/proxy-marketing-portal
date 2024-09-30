@@ -48,7 +48,12 @@ class ProductResource extends Resource
 
     public static function canDeleteAny(): bool
     {
-        return Auth::user()->checkPermissionTo('delete Product');
+        return Auth::user()->checkPermissionTo('delete Product (web)');
+    }
+
+    public static function canForceDeleteAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('force-delete Product (web)');
     }
 
 
