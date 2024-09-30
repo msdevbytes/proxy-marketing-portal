@@ -21,7 +21,7 @@
 </head>
 
 <body class="antialiased bg-gray-900/95">
-
+    {{ $slot }}
     @filamentScripts
 
     @yield('content')

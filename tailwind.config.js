@@ -10,7 +10,7 @@ export default {
         "./resources/views/filament/**/*.blade.php",
         "./resources/**/*.blade.php",
         "./vendor/filament/**/*.blade.php",
-        "./vendor/danharrin/filament-blog/resources/views/**/*.blade.php",
+        "./app/Filament/**/*.php",
     ],
     theme: {
         extend: {},
