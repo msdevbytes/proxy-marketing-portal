@@ -53,6 +53,11 @@ class OrderResource extends Resource
         return Auth::user()->checkPermissionTo('force-delete Order (web)');
     }
 
+    public static function canRestoreAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('restore Order (web)');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

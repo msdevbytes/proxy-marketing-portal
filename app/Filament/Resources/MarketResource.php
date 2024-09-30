@@ -33,6 +33,11 @@ class MarketResource extends Resource
         return Auth::user()->checkPermissionTo('force-delete Market (web)');
     }
 
+    public static function canRestoreAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('restore Market (web)');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

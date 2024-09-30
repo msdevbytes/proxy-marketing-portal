@@ -39,6 +39,11 @@ class ReservationResource extends Resource
         return Auth::user()->checkPermissionTo('force-delete Reservation (web)');
     }
 
+    public static function canRestoreAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('restore Reservation (web)');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

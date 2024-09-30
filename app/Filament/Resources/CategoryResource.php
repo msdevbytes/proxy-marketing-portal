@@ -32,7 +32,10 @@ class CategoryResource extends Resource
         return Auth::user()->checkPermissionTo('force-delete Category (web)');
     }
 
-
+    public static function canRestoreAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('restore Category (web)');
+    }
 
     public static function form(Form $form): Form
     {

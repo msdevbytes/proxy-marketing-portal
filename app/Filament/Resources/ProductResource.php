@@ -57,6 +57,12 @@ class ProductResource extends Resource
     }
 
 
+    public static function canRestoreAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('restore Product (web)');
+    }
+
+
     public static function form(Form $form): Form
     {
         return $form
