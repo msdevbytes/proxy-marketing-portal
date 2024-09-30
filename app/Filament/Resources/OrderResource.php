@@ -107,11 +107,12 @@ class OrderResource extends Resource
                             ->image(),
                         Forms\Components\FileUpload::make('review_image')
                             ->image(),
-                        Forms\Components\FileUpload::make('refund_image')
-                            ->image(),
+
                         Forms\Components\FileUpload::make('buyer_verification_image')
-                            ->image()
-                            ->placeholder('You can only view this field')
+                            ->image(),
+
+                        Forms\Components\FileUpload::make('refund_image')
+                            ->image()->placeholder('You can only view this field')
                             ->downloadable(true)
                             ->disabled(Auth::user()->isPM())
                             ->previewable(true)
@@ -153,7 +154,7 @@ class OrderResource extends Resource
 
                         ]),
                         Section::make('Images')->schema([
-                            Forms\Components\FileUpload::make('buyer_verification_image')
+                            Forms\Components\FileUpload::make('refund_image')
                                 ->image(),
                             Forms\Components\FileUpload::make('invoice_image')
                                 ->image()
@@ -168,7 +169,7 @@ class OrderResource extends Resource
                                 ->disabled(Auth::user()->isPMM())
                                 ->deletable(Auth::user()->isPM())
                                 ->placeholder('You can only view this field'),
-                            Forms\Components\FileUpload::make('refund_image')
+                            Forms\Components\FileUpload::make('buyer_verification_image')
                                 ->image()->downloadable(true)
                                 ->previewable(true)
                                 ->disabled(Auth::user()->isPMM())
