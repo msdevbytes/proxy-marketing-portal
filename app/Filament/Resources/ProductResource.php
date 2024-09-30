@@ -46,6 +46,11 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
 
+    public static function canDeleteAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('delete Product');
+    }
+
 
     public static function form(Form $form): Form
     {

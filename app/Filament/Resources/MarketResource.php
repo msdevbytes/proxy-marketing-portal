@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MarketResource\Pages;
 use App\Filament\Resources\MarketResource\RelationManagers;
 use App\Models\Market;
+use Auth;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -21,6 +22,11 @@ class MarketResource extends Resource
     protected static ?string $model = Market::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
+
+    public static function canDeleteAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('delete Product');
+    }
 
     public static function form(Form $form): Form
     {

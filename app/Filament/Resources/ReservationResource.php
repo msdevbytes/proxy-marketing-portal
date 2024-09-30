@@ -29,6 +29,11 @@ class ReservationResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-calendar-date-range';
 
 
+    public static function canDeleteAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('delete Product');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

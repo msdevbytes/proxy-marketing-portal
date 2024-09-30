@@ -43,6 +43,11 @@ class OrderResource extends Resource
         return Auth::user()->isSuperAdmin();
     }
 
+    public static function canDeleteAny(): bool
+    {
+        return Auth::user()->checkPermissionTo('delete Product');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
