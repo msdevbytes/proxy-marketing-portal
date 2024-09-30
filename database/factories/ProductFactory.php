@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,30 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "user_id" => User::factory(),
+            "name" => fake()->title(),
+            "image",
+            "amazone_image",
+            "product_brand",
+            "keyword",
+            "amz_sold_by",
+            "product_link",
+            "asin",
+            "seller",
+            "sale_limit_per_day",
+            "sale_limit_overall",
+            "commission",
+            "is_expensive",
+            "product_price",
+            "amazone_short_link",
+            "review_instructions",
+            "refund_conditions",
+            "comission_conditions",
+            "instructions",
+            "marketing_end_date",
+            "category_id",
+            "market_id",
+            "status"
         ];
     }
 }

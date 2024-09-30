@@ -50,6 +50,7 @@ class Login extends BaseLogin
                 ->title('Account Deactivated')
                 ->body('Your account has been deactivated by admin.')
                 ->danger()
+                ->duration(10000)
                 ->send();
             throw ValidationException::withMessages([
                 'data.email' => "This email is deactevated by admin.",

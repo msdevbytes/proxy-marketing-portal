@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\OrderStatus;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
+use App\Forms\Components\ImageView;
 use App\Models\Order;
 use App\Models\User;
 use Auth;
@@ -62,13 +63,6 @@ class OrderResource extends Resource
                     ]),
                     Section::make('Order Detail')->schema([
                         Hidden::make('product_id')->default(request()->get('product_id')),
-                        // Forms\Components\Select::make('product_id')
-                        //     ->preload()
-                        //     ->native(false)
-                        //     ->searchable()
-                        //     ->required()
-                        //     ->relationship('product', titleAttribute: 'name')
-                        //     ->hidden(!(request()->get('product_id') == null)),
                         Forms\Components\Select::make("status")
                             ->preload()
                             ->label('Order Status')
@@ -100,7 +94,13 @@ class OrderResource extends Resource
                             ->image(),
                         Forms\Components\FileUpload::make('refund_image')
                             ->image(),
-
+                        Forms\Components\FileUpload::make('buyer_verification_image')
+                            ->image()
+                            ->placeholder('You can only view this field')
+                            ->downloadable(true)
+                            ->disabled(Auth::user()->isPM())
+                            ->previewable(true)
+                            ->deletable(Auth::user()->isPMM()),
                     ])->columns(3),
                 ])->visible(Auth::user()->isPM()),
                 Group::make()->schema([
@@ -140,6 +140,25 @@ class OrderResource extends Resource
                         Section::make('Images')->schema([
                             Forms\Components\FileUpload::make('buyer_verification_image')
                                 ->image(),
+                            Forms\Components\FileUpload::make('invoice_image')
+                                ->image()
+                                ->downloadable(true)
+                                ->disabled(Auth::user()->isPMM())
+                                ->previewable(true)
+                                ->deletable(Auth::user()->isPM())
+                                ->placeholder('You can only view this field'),
+                            Forms\Components\FileUpload::make('review_image')
+                                ->image()->downloadable(true)
+                                ->previewable(true)
+                                ->disabled(Auth::user()->isPMM())
+                                ->deletable(Auth::user()->isPM())
+                                ->placeholder('You can only view this field'),
+                            Forms\Components\FileUpload::make('refund_image')
+                                ->image()->downloadable(true)
+                                ->previewable(true)
+                                ->disabled(Auth::user()->isPMM())
+                                ->deletable(Auth::user()->isPM())
+                                ->placeholder('You can only view this field'),
                         ]),
                     ])->from('md'),
                 ])->visible(Auth::user()->isPMM()),
