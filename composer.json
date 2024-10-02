@@ -2,13 +2,17 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
         "althinect/filament-spatie-roles-permissions": "^2.2",
         "blade-ui-kit/blade-icons": "^1.7",
         "codeat3/blade-teeny-icons": "^1.10",
+        "coduo/php-humanizer": "^5.0",
         "davidhsianturi/blade-bootstrap-icons": "^1.5",
         "eightynine/filament-advanced-widgets": "^3.0",
         "filament/filament": "^3.2",
@@ -38,7 +42,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

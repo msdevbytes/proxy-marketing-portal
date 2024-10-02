@@ -17,6 +17,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Panel;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -74,11 +75,15 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         if ($this->status == 0) {
-            Auth::logout();
+            FacadesAuth::logout();
         }
         return $this->status == 1;
     }
 
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole('Super Admin');
+    }
     public function isPM(): bool
     {
         return $this->hasRole('PM');
