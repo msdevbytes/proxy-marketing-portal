@@ -4,7 +4,7 @@ namespace App\Providers\Filament;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Filament\Pages\Auth\Login;
-use App\Filament\Pages\Auth\Register as AuthRegister;
+use App\Filament\Pages\Auth\Register;
 use App\Livewire\ProductStats;
 use App\Livewire\ProductStatsOverview;
 use App\Models\Product;
@@ -15,7 +15,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages;
-use Filament\Pages\Auth\Register;
 use App\Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -39,12 +38,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
-            ->registration(AuthRegister::class)
+            ->registration(Register::class)
             ->profile(isSimple: false)
             ->colors([
                 'primary' => Color::Amber,
             ])
-
             ->spa()
             ->sidebarCollapsibleOnDesktop()
             // ->unsavedChangesAlerts()

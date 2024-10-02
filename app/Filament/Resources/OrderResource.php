@@ -27,8 +27,10 @@ use Filament\Infolists\Components\Section as ComponentsSection;
 use Filament\Infolists\Infolist;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Model;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use Webbingbrasil\FilamentCopyActions\Pages\Actions\CopyAction;
 
@@ -195,16 +197,14 @@ class OrderResource extends Resource
                 } else if (Auth::user()->isPM()) {
                     $query->where('user_id', Auth::user()->id);
                 }
-            })
+            })->recordUrl(fn() => null)->recordAction(null)
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('Order ID'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
-                    ->sortable()->searchable(),
-                IconColumn::make('user')->icon('tni-whatsapp')->color('success'),
+                ViewColumn::make('user')->view('tables.columns.user-info'),
+
                 Tables\Columns\TextColumn::make('amz_order_number')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('product.id')
