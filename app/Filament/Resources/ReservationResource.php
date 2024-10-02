@@ -71,9 +71,10 @@ class ReservationResource extends Resource
             ->modifyQueryUsing(function (Builder $query) {
                 if (Auth::user()->isPMM()) {
                     $query->join('products', 'products.id', '=', 'reservations.product_id')
-                        ->where('products.user_id', Auth::user()->id)->select('reservations.*');
-                } else if (!Auth::user()->isSuperAdmin()) {
-                    $query->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'));
+                        ->where('products.user_id', Auth::user()->id)->select('reservations.*')
+                        ->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'));
+                } else if (Auth::user()->isPM()) {
+                    $query->where("user_id", Auth::user()->id)->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'));
                 }
             })
             ->columns([

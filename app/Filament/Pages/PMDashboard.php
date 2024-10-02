@@ -15,7 +15,7 @@ class PMDashboard extends Page
 
     protected static ?string $title = 'Dashboard';
 
-    protected static ?string $slug = 'pm-dashboard';
+    protected static ?string $slug = 'dashboard';
 
 
     // public static function canAccess(): bool

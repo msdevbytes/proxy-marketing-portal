@@ -11,31 +11,32 @@ use Livewire\Component;
 
 class OrderStats extends Component
 {
-    public $title = 'Order Stats';
+
+    public $title = '';
     public $bgColor = 'bg-red';
     public string $icon;
     public string $description;
     public string $link;
     public array $header;
+    public array $filterOptions;
     public Collection $data;
+    public string $class;
+    public string $orderStatus = OrderStatus::ORDERED->value;
 
     function mount()
     {
+        $this->filterOptions = OrderStatus::toArray();
         $stats = $this->getProductSummaryByStatus();
-
-        $this->title = 'Order Status Summary';
-        $this->bgColor = 'bg-green';
         $this->icon = 'bi-bar-chart-line-fill';
         $this->description = 'Custom stats description';
         $this->link = 'product-stats';
         $this->header = [
-            "Active Orders" => metricSuffix($stats->total_active),
-            "Disabled Orders" => metricSuffix($stats->total_disabled)
+            "Revenue Comission" => metricSuffix($stats->total_commission),
         ];
         $this->data = collect([
-            ['icon' => 'bi-compass', 'title' => 'Today: Active / Disabled ', 'value' => sprintf("%s / %s", metricSuffix($stats->todays_active), metricSuffix($stats->todays_disabled))],
-            ['icon' => 'bi-calendar-check', 'title' => Carbon::now()->monthName . ': Active / Disabled', 'value' => sprintf("%s / %s", metricSuffix($stats->monthly_active), metricSuffix($stats->monthly_disabled))],
-            ['icon' => 'bi-calendar4-event', 'title' => 'Overall: Active / Disabled', 'value' => sprintf("%s / %s", metricSuffix($stats->total_active), metricSuffix($stats->total_disabled))],
+            ['icon' => 'bi-compass', 'title' => 'Today', 'value' =>  metricSuffix($stats->todays_total)],
+            ['icon' => 'bi-calendar-check', 'title' => Carbon::now()->monthName, 'value' => metricSuffix($stats->month_total)],
+            ['icon' => 'bi-calendar4-event', 'title' => 'Overall', 'value' => metricSuffix($stats->total_commission)],
         ]);
     }
 
@@ -49,20 +50,19 @@ class OrderStats extends Component
         $today = Carbon::today();
         $currentMonth = Carbon::now()->month;
 
-        $stats = DB::table('orders')
+        $stats = DB::table('products')->join('orders', 'orders.product_id', '=', 'products.id')
             ->selectRaw("
-            SUM(CASE WHEN status = '" . OrderStatus::ORDERED->value . "' THEN 1 ELSE 0 END) as total_active,
-            SUM(CASE WHEN status = '" . OrderStatus::ORDERED->value . "' THEN 1 ELSE 0 END) as total_disabled,
-            SUM(CASE WHEN status = '" . OrderStatus::ORDERED->value . "' AND DATE(created_at) = ? THEN 1 ELSE 0 END) as todays_active,
-            SUM(CASE WHEN status = '" . OrderStatus::ORDERED->value . "' AND DATE(created_at) = ? THEN 1 ELSE 0 END) as todays_disabled,
-            SUM(CASE WHEN status = '" . OrderStatus::ORDERED->value . "' AND MONTH(created_at) = ? THEN 1 ELSE 0 END) as monthly_active,
-            SUM(CASE WHEN status = '" . OrderStatus::ORDERED->value . "' AND MONTH(created_at) = ? THEN 1 ELSE 0 END) as monthly_disabled
-        ", [$today, $today, $currentMonth, $currentMonth]);
+            if(sum(products.commission), sum(products.commission), 0) as total_commission,
+            SUM(CASE WHEN orders.status = '" . $this->orderStatus . "' AND DATE(orders.created_at) = ? THEN 1 ELSE 0 END) as todays_total,
+            SUM(CASE WHEN orders.status = '" . $this->orderStatus . "' AND MONTH(orders.created_at) = ? THEN 1 ELSE 0 END) as month_total
+        ", [$today, $currentMonth])->where('orders.status', '=', $this->orderStatus);
 
         if (Auth::user()->isSuperAdmin()) {
             $stats = $stats->first();
+        } else if (Auth::user()->isPMM()) {
+            $stats = $stats->where('products.user_id', Auth::user()->id)->first();
         } else {
-            $stats = $stats->where('user_id', Auth::user()->id)->first();
+            $stats = $stats->where('orders.user_id', Auth::user()->id)->first();
         }
 
         return $stats;

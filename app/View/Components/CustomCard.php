@@ -2,6 +2,7 @@
 
 namespace App\View\Components;
 
+use Illuminate\View\ComponentAttributeBag;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
@@ -18,7 +19,8 @@ class CustomCard extends Component
         public string $description,
         public string $link,
         public array $header,
-        public Collection $data
+        public Collection $data,
+        public string $class
     ) {}
 
     /**
@@ -27,5 +29,10 @@ class CustomCard extends Component
     public function render(): View
     {
         return view('components.stats.custom-card');
+    }
+
+    public function getExtraAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag();
     }
 }

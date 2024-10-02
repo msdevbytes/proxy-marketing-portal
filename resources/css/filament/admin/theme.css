@@ -20,6 +20,25 @@
 .bg-blue {
     @apply from-blue-500 to-blue-700 dark:bg-gradient-to-tr dark:from-blue-950 dark:to-blue-700;
 }
-.bg-secondary {
+.bg-cyan {
     @apply from-cyan-500 to-cyan-700 dark:bg-gradient-to-tr dark:from-cyan-950 dark:to-cyan-700;
+}
+
+.Reviewed {
+    @apply from-slate-500 to-slate-700 dark:bg-gradient-to-tr dark:from-slate-950 dark:to-slate-700;
+}
+.Cancelled {
+    @apply from-orange-500 to-orange-700 dark:bg-gradient-to-tr dark:from-orange-950 dark:to-orange-700;
+}
+.Refunded {
+    @apply from-lime-500 to-lime-700 dark:bg-gradient-to-tr dark:from-lime-950 dark:to-lime-700;
+}
+.OnHold {
+    @apply from-emerald-500 to-emerald-700 dark:bg-gradient-to-tr dark:from-emerald-950 dark:to-emerald-700;
+}
+.Delivered {
+    @apply from-teal-500 to-teal-700 dark:bg-gradient-to-tr dark:from-teal-950 dark:to-teal-700;
+}
+.Ordered {
+    @apply from-sky-500 to-sky-700 dark:bg-gradient-to-tr dark:from-sky-950 dark:to-sky-700;
 }

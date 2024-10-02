@@ -1,4 +1,4 @@
-<div class="flex flex-col rounded-md overflow-hidden shadow-md">
+<div @class(['flex flex-col rounded-md overflow-hidden shadow-md', $class])>
     <div @class(['p-5 text-white bg-gradient-to-t relative ', $bgColor])>
         @isset($icon)
             <span class="absolute right-0">

@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Product;
 use Carbon\Carbon;
 use Coduo\PHPHumanizer\NumberHumanizer;
 use Illuminate\Support\Collection;
@@ -11,13 +10,17 @@ use Livewire\Component;
 
 class ProductStats extends Component
 {
+
+
     public $title = 'Custom Stats';
     public $bgColor = 'bg-info';
     public string $icon;
     public string $description;
     public string $link;
     public array $header;
+    public array $filterOptions;
     public Collection $data;
+    public string $class;
 
     function mount()
     {
