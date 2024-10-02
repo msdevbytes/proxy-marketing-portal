@@ -104,6 +104,7 @@ class OrderResource extends Resource
                     ]),
                     Section::make('Images')->schema([
                         Forms\Components\FileUpload::make('invoice_image')
+                            ->label("Order screenshot")
                             ->image(),
                         Forms\Components\FileUpload::make('review_image')
                             ->image(),
@@ -157,6 +158,7 @@ class OrderResource extends Resource
                             Forms\Components\FileUpload::make('refund_image')
                                 ->image(),
                             Forms\Components\FileUpload::make('invoice_image')
+                                ->label("Order screenshot")
                                 ->image()
                                 ->downloadable(true)
                                 ->disabled(Auth::user()->isPMM())
@@ -217,7 +219,7 @@ class OrderResource extends Resource
                     ->dateTime()
                     ->sortable()->label('Created/Modified Date'),
                 Tables\Columns\TextColumn::make('status'),
-                Tables\Columns\ImageColumn::make('invoice_image'),
+                Tables\Columns\ImageColumn::make('invoice_image')->label("Order screenshot"),
                 Tables\Columns\IconColumn::make('is_customer_scammer')
                     ->boolean()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('review_type_commission')
@@ -300,7 +302,7 @@ class OrderResource extends Resource
                 Infolists\Components\TextEntry::make('remarks')->columnSpanFull(),
 
                 ComponentsSection::make('Images')->schema([
-                    Infolists\Components\ImageEntry::make('invoice_image'),
+                    Infolists\Components\ImageEntry::make('invoice_image')->label("Order screenshot"),
                     Infolists\Components\ImageEntry::make('review_image'),
                     Infolists\Components\ImageEntry::make('buyer_verification_image'),
                     Infolists\Components\ImageEntry::make('refund_image'),

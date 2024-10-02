@@ -7,3 +7,19 @@
 .timer h1 + h1:before {
     content: ": ";
 }
+
+.bg-info {
+    @apply from-yellow-500 to-yellow-700 dark:bg-gradient-to-tr dark:from-yellow-950 dark:to-yellow-700;
+}
+.bg-red {
+    @apply from-red-500 to-red-700 dark:bg-gradient-to-tr dark:from-red-950 dark:to-red-700;
+}
+.bg-green {
+    @apply from-green-500 to-green-700 dark:bg-gradient-to-tr dark:from-green-950 dark:to-green-700;
+}
+.bg-blue {
+    @apply from-blue-500 to-blue-700 dark:bg-gradient-to-tr dark:from-blue-950 dark:to-blue-700;
+}
+.bg-secondary {
+    @apply from-cyan-500 to-cyan-700 dark:bg-gradient-to-tr dark:from-cyan-950 dark:to-cyan-700;
+}
