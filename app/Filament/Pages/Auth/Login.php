@@ -29,7 +29,7 @@ class Login extends BaseLogin
         }
 
         $user = Filament::auth()->user();
-        if ($user->email_verified_at == null) {
+        if (!$user->status) {
             Filament::auth()->logout();
             Notification::make()
                 ->title('Account On Hold')
@@ -44,7 +44,7 @@ class Login extends BaseLogin
             ]);
         }
 
-        if ($user->acc_deactive_at != null || !$user->status) {
+        if ($user->acc_deactive_at != null) {
             Filament::auth()->logout();
             Notification::make()
                 ->title('Account Deactivated')
