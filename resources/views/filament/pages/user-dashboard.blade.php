@@ -2,7 +2,7 @@
 <x-filament-panels::page>
 
     <section class="flex flex-col ">
-        @livewire('product-stats', ['class' => 'mx-auto w-8/12'], key(Auth::user()->id . Str::random(10)))
+        @livewire('product-stats', ['class' => 'mx-auto md:w-8/12 w-full'], key(Auth::user()->id . Str::random(10)))
     </section>
     <section id="pm-dashboard"
         class="grid md:grid-cols-2 xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 grid-rows-1 md:gap-4 gap-3">

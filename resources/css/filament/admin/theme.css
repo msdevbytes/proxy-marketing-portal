@@ -46,5 +46,5 @@
     @apply from-indigo-500 to-indigo-700 dark:bg-gradient-to-tr dark:from-indigo-950 dark:to-indigo-700;
 }
 .Scammed {
-    @apply from-violet-500 to-violet-700 dark:bg-gradient-to-tr dark:from-violet-950 dark:to-violet-700;
+    @apply from-fuchsia-500 to-fuchsia-700 dark:bg-gradient-to-tr dark:from-fuchsia-950 dark:to-fuchsia-700;
 }
