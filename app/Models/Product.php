@@ -63,7 +63,7 @@ class Product extends Model
 
     function isProductDisabledOrMarketingEnd(): bool
     {
-        return !$this->marketing_end_date->gte(Carbon::now()->toDateString()) || !$this->status;
+        return !$this->status;
     }
 
     public function getReservationTimeAttribute()

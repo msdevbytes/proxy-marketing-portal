@@ -38,8 +38,10 @@ class Register extends BaseRegister
                         $this->getPhoneNumberFormComponent(),
                         $this->getGenderFormComponent(),
                         $this->getAddressFormComponent(),
-                        $this->getCnicImageFormComponent(),
+                        $this->getCnicFrontImageFormComponent(),
+                        $this->getCnicBackImageFormComponent(),
                         $this->getBankAccountNameFormComponent(),
+                        $this->getBankNameFormComponent(),
                         $this->getBankAccountNumberFormComponent(),
 
                     ])
@@ -124,16 +126,27 @@ class Register extends BaseRegister
             ->label('Profile Image')
             ->required();
     }
-    protected function getCnicImageFormComponent(): Component
+    protected function getCnicFrontImageFormComponent(): Component
     {
-        return FileUpload::make('cnic_image')->label('CNIC Picture');
+        return FileUpload::make('cnic_front_image')->label('CNIC Front Picture');
+    }
+    protected function getCnicBackImageFormComponent(): Component
+    {
+        return FileUpload::make('cnic_back_image')->label('CNIC Back Picture');
     }
 
     protected function getBankAccountNameFormComponent(): Component
     {
-        return TextInput::make('bank_account_name')
+        return TextInput::make('bank_account_holder_name')
             ->required();
     }
+
+    protected function getBankNameFormComponent(): Component
+    {
+        return TextInput::make('bank_name')
+            ->required();
+    }
+
     protected function getBankAccountNumberFormComponent(): Component
     {
         return TextInput::make('bank_account_number')

@@ -23,8 +23,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('image')->nullable();
-            $table->string('cnic_image')->nullable();
-            $table->string('bank_account_name')->nullable();
+            $table->string('cnic_front_image')->nullable();
+            $table->string('cnic_back_image')->nullable();
+            $table->string('bank_account_holder_name')->nullable();
+            $table->string('bank_name')->nullable();
             $table->string('bank_account_number')->nullable();
             $table->foreignId('bank_account_city_id')->nullable()->constrained(table: 'cities')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('city_id')->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();

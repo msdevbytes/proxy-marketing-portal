@@ -218,7 +218,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()->label('Created/Modified Date'),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')->searchable(),
                 Tables\Columns\ImageColumn::make('invoice_image')->label("Order screenshot"),
                 Tables\Columns\IconColumn::make('is_customer_scammer')
                     ->boolean()->toggleable(isToggledHiddenByDefault: true),
@@ -234,8 +234,6 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('review_link')
                     ->searchable()->toggleable(isToggledHiddenByDefault: true),
-
-
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ProductResource\Pages;
 
 use App\Filament\Resources\ProductResource;
 use Filament\Actions;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use Webbingbrasil\FilamentCopyActions\Pages\Actions\CopyAction;
 
@@ -14,6 +15,8 @@ class ViewProduct extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            EditAction::make('edit')->color("success"),
+            Actions\DeleteAction::make(),
             CopyAction::make('Copy')->copyable(function ($record) {
                 return sprintf(
                     '

@@ -15,6 +15,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -24,6 +25,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup as ActionsActionGroup;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
@@ -99,7 +101,6 @@ class ProductResource extends Resource
                 Section::make("Product Limits")->schema([
                     Forms\Components\DatePicker::make('marketing_end_date')
                         ->displayFormat("M d, Y")
-                        ->required()
                         ->timezone(env('APP_TIMEZONE'))
                         ->minDate(now())
                         ->closeOnDateSelection()
@@ -126,9 +127,11 @@ class ProductResource extends Resource
                 Section::make('Select Category & Market')
                     ->schema([
                         Forms\Components\Select::make('category_id')
+                            ->required()
                             ->native(false)
                             ->relationship('category', titleAttribute: 'category'),
                         Forms\Components\Select::make('market_id')
+                            ->required()
                             ->native(false)
                             ->relationship('market', titleAttribute: 'market'),
                     ])->columns(['md' => 2, 'sm' => 1]),
@@ -142,18 +145,25 @@ class ProductResource extends Resource
                     ])->label("Images")->columns(2),
                 Section::make("Instructions & Condtions")->schema([
                     Forms\Components\Textarea::make('review_instructions')
-                        ->columnSpanFull()
+                        ->readOnly()
+                        ->default('5 star possetive review need 2-3 lines')
                         ->rows(5),
                     Forms\Components\Textarea::make('refund_conditions')
-                        ->columnSpanFull()
+                        ->readOnly()
+                        ->default('Refund after review : Product+pp fee is covered')
                         ->rows(5),
                     Forms\Components\Textarea::make('comission_conditions')
-                        ->columnSpanFull()
+                        ->readOnly()
+                        ->default('Refund after review : Product+pp fee is covered')
                         ->rows(5),
                     Forms\Components\Textarea::make('instructions')
-                        ->columnSpanFull()
+                        ->readOnly()
+                        ->default('1: 5 Star positive review needed of 2-3 lines 2: Review after 4-5 days of receiving product 3: Refund takes 3-4 working days once review goes live. Weekends are excluded. Product+PPFee covered')
                         ->rows(5),
-                ])
+                ])->columns([
+                    'md' => 2,
+                    'sm' => 1
+                ]),
             ])->columns(['md' => 4, 'sm' => 1]);
     }
 
@@ -165,12 +175,10 @@ class ProductResource extends Resource
                 if (Auth::user()->isPMM()) {
                     $query->where('user_id', Auth::user()?->id);
                 } else if (!Auth::user()->isSuperAdmin()) {
-                    $query->where('status', 1)->whereDate('marketing_end_date', '>=', Carbon::now());
+                    $query->where('status', 1);
                 }
             })
             ->columns([
-
-
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Seller Name')
                     ->searchable(),
@@ -229,7 +237,7 @@ class ProductResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\IconColumn::make('status')->boolean(),
+                ToggleColumn::make('status')->hidden(Auth::user()->isPM())
             ])
             ->filters([
                 SelectFilter::make('users')->label('PMMs')->relationship('user', 'name', function (User $user) {
@@ -264,7 +272,7 @@ class ProductResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->button()
                     ->color('primary'),
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

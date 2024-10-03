@@ -4,11 +4,12 @@ namespace App\Enums;
 
 enum OrderStatus: string
 {
-    case REVIEWED = "Reviewed";
     case ORDERED = "Ordered";
+    case REVIEWED = "Reviewed";
     case DELIVERED = "Delivered";
-    case ONHOLD = "OnHold";
     case REFUNDED = "Refunded";
+    case COMPLETED = "Completed";
+    case ONHOLD = "OnHold";
     case CANCELLED = "Cancelled";
     case ADJUSTMENT = "Adjustment";
     case SCAMMED = "Scammed";
