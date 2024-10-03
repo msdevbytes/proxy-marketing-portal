@@ -16,6 +16,8 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        Role::create(['name' => 'PMM']);
+        Role::create(['name' => 'PM']);
         $r = Role::create(['name' => 'Super Admin']);
         $admin = User::factory()->create([
             'name' => 'Admin',

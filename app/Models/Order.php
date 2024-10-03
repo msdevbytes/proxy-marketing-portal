@@ -66,7 +66,9 @@ class Order extends Model
                 OrderStatus::REFUNDED->value,
                 OrderStatus::DELIVERED->value,
                 OrderStatus::ONHOLD->value,
-                OrderStatus::CANCELLED->value
+                OrderStatus::CANCELLED->value,
+                OrderStatus::SCAMMED->value,
+                OrderStatus::ADJUSTMENT->value
             ]
 
         ]);

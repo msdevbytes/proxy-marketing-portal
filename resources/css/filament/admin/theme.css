@@ -42,3 +42,9 @@
 .Ordered {
     @apply from-sky-500 to-sky-700 dark:bg-gradient-to-tr dark:from-sky-950 dark:to-sky-700;
 }
+.Adjustment {
+    @apply from-indigo-500 to-indigo-700 dark:bg-gradient-to-tr dark:from-indigo-950 dark:to-indigo-700;
+}
+.Scammed {
+    @apply from-violet-500 to-violet-700 dark:bg-gradient-to-tr dark:from-violet-950 dark:to-violet-700;
+}
