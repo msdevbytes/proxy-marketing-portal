@@ -215,7 +215,7 @@ class ProductResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('marketing_end_date')
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
@@ -237,7 +237,7 @@ class ProductResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                ToggleColumn::make('status')->hidden(Auth::user()->isPM())
+                ToggleColumn::make('status')->hidden(Auth::user()->isPM())->offColor("danger")->onColor("success")
             ])
             ->filters([
                 SelectFilter::make('users')->label('PMMs')->relationship('user', 'name', function (User $user) {

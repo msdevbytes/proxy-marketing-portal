@@ -12,6 +12,8 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -182,31 +184,48 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('roles.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->copyable()
+                    ->tooltip('Copy Email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone_number')
+                    ->copyable()
+                    ->tooltip('Copy Number')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('cnic')
+                    ->copyable()
+                    ->tooltip('Copy CNIC')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('gender'),
+                Tables\Columns\TextColumn::make('gender')->searchable(),
                 Tables\Columns\TextColumn::make('address')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\ImageColumn::make('cnic_image'),
-                Tables\Columns\TextColumn::make('bank_account_name')
+                Tables\Columns\ImageColumn::make('image')->circular(),
+                Tables\Columns\ImageColumn::make('cnic_front_image')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ImageColumn::make('cnic_back_image')->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('bank_account_holder_name')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('bank_name')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('bank_account_number')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('bank_account_city_id')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('city.name')
+                    ->searchable()
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
+                ToggleColumn::make('status')->hidden(Auth::user()->isPM())->offColor("danger")->onColor("success"),
                 Tables\Columns\TextColumn::make('acc_deactive_at')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
