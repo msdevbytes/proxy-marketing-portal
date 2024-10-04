@@ -67,7 +67,9 @@ class AdminPanelProvider extends PanelProvider
                     ->badge(fn() => (Auth::user()->isPMM() ? Auth::user()->products()->where('products.status', 1)->whereDate('marketing_end_date', '>=', Carbon::now())->count() : null))
                     ->sort(0)
                     ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.products.index'))
-            ])
+            ])->darkMode(true)
+            ->brandLogo(fn() => view('filament.logo'))->brandName("HS Marketing")->brandLogoHeight("2.5rem")
+            ->favicon(asset('images/logo2.jpg'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

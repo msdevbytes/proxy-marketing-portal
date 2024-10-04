@@ -203,7 +203,7 @@ class ProductResource extends Resource
                     ->separator(',')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('id')->label('Product ID')->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\ImageColumn::make('image')->circular(),
                 Tables\Columns\IconColumn::make('is_expensive')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->boolean(),
@@ -240,13 +240,15 @@ class ProductResource extends Resource
                 ToggleColumn::make('status')->hidden(Auth::user()->isPM())->offColor("danger")->onColor("success")
             ])
             ->filters([
-                SelectFilter::make('users')->label('PMMs')->relationship('user', 'name', function (User $user) {
-                    return $user->role('PMM');
-                })->native(false)->searchable()->preload()->hidden(Auth::user()->isPMM()),
-                DateRangeFilter::make('created_at')
-                    ->label('Date Range')
-                    ->autoApply(false)
-                    ->timezone(env('APP_TIMEZONE'))
+                SelectFilter::make('market')->relationship('market', 'market')->searchable()->preload()->native(false),
+                SelectFilter::make('category')->relationship('category', 'category')->searchable()->preload()->native(false),
+                // SelectFilter::make('users')->label('PMMs')->relationship('user', 'name', function (User $user) {
+                //     return $user->role('PMM');
+                // })->native(false)->searchable()->preload()->hidden(Auth::user()->isPMM()),
+                // DateRangeFilter::make('created_at')
+                //     ->label('Date Range')
+                //     ->autoApply(false)
+                //     ->timezone(env('APP_TIMEZONE'))
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4)->filtersFormWidth(MaxWidth::FourExtraLarge)
             ->actions([
@@ -262,13 +264,13 @@ class ProductResource extends Resource
 
                 Action::make('danger')
                     ->hidden(function (Product $product) {
-                        return (!Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin()  || $product->isProductDisabledOrMarketingEnd());
+                        return (!Auth::user()->checkProductReservation($product->id)  || $product->isProductDisabledOrMarketingEnd());
                     })
                     ->color('danger')
+                    ->disabled()
                     ->button()
-                    ->label('Release')
-                    ->icon('lucide-alarm-clock')
-                    ->action(fn(Product $product) => self::releaseProdct($product)),
+                    ->label('Reserved')
+                    ->icon('lucide-alarm-clock'),
                 Tables\Actions\ViewAction::make()
                     ->button()
                     ->color('primary'),
@@ -311,6 +313,7 @@ class ProductResource extends Resource
 
     public static function releaseProdct(Product $product)
     {
+
         if (Auth::user()->isSuperAdmin()) {
             Reservation::where('product_id', $product->id)
                 ->whereRaw('reservation_expiry > STR_TO_DATE(?, "%Y-%m-%d %H:%i:%s")', Carbon::now()->format('Y-m-d H:m:s'))->delete();

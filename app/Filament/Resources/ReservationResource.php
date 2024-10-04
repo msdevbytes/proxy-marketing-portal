@@ -78,22 +78,20 @@ class ReservationResource extends Resource
                 }
             })
             ->columns([
-                TextColumn::make('reservation_expiry')->view('tables.columns.reservation-timer')->alignCenter(),
                 Tables\Columns\TextColumn::make('reservation_number')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('keywords')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('product.id')
                     ->numeric()
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('market.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
+                TextColumn::make('reservation_expiry')->view('tables.columns.reservation-timer')->alignCenter(),
+
+                Tables\Columns\ImageColumn::make('product.image')->circular(),
+
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -107,9 +105,18 @@ class ReservationResource extends Resource
                 //
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
+                Action::make('reserve')
+                    // ->hidden(function (Reservation $reservation) {
+                    //     return (Auth::user()->checkProductReservation($reservation->product->id) || Auth::user()->isSuperAdmin() || $reservation->product->isProductDisabledOrMarketingEnd());
+                    // })
+                    ->color('danger')
+                    ->button()
+                    ->label('Release')
+                    ->icon('lucide-alarm-clock')
+                    ->action(fn(Reservation $reservation) => ProductResource::releaseProdct($reservation->product)),
                 Action::make('createOrder')
                     ->hidden(!Auth::user()->isPM())
+                    ->button()
                     ->url(fn(Reservation $record): string => route('filament.admin.resources.orders.create', ['product_id' => $record->product_id]))
 
             ])

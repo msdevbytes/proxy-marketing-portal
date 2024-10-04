@@ -48,3 +48,7 @@
 .Scammed {
     @apply from-fuchsia-500 to-fuchsia-700 dark:bg-gradient-to-tr dark:from-fuchsia-950 dark:to-fuchsia-700;
 }
+
+.Completed {
+    @apply from-pink-500 to-pink-700 dark:bg-gradient-to-tr dark:from-pink-950 dark:to-pink-700;
+}

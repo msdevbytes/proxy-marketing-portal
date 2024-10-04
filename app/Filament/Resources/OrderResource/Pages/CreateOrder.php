@@ -4,6 +4,7 @@ namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Enums\OrderStatus;
 use App\Filament\Resources\OrderResource;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Reservation;
 use Auth;
@@ -38,6 +39,25 @@ class CreateOrder extends CreateRecord
             Notification::make()
                 ->title('Hey ' . Auth::user()?->name)
                 ->body("Please reserve this product before order")
+                ->icon('heroicon-o-information-circle')
+                ->color("danger")
+                ->send();
+            $this->halt();
+        }
+
+        $product = Product::find($this->data['product_id']);
+
+        $order = Order::join("products", "products.id", "=", "orders.product_id")
+            ->where([
+                ['customer_email', $this->data['customer_email']],
+                ['orders.status', OrderStatus::ORDERED->value],
+                ['products.amz_sold_by', $product->amz_sold_by]
+            ])->first();
+
+        if ($order != null) {
+            Notification::make()
+                ->title('Hey ' . Auth::user()?->name)
+                ->body("This seller already purchase from this store.")
                 ->icon('heroicon-o-information-circle')
                 ->color("danger")
                 ->send();

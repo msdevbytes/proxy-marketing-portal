@@ -240,14 +240,14 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('users')->label('PMs')->relationship('user', 'name', function (User $user) {
-                    return $user->role('PMM');
-                })->hidden(Auth::user()->isPMM()),
+                // SelectFilter::make('users')->label('PMs')->relationship('user', 'name', function (User $user) {
+                //     return $user->role('PMM');
+                // })->hidden(Auth::user()->isPMM()),
                 SelectFilter::make('market')->relationship('market', 'market'),
-                DateRangeFilter::make('created_at')
-                    ->label('Date Range')
-                    ->autoApply(false)
-                    ->timezone(env('APP_TIMEZONE'))
+                // DateRangeFilter::make('created_at')
+                //     ->label('Date Range')
+                //     ->autoApply(false)
+                //     ->timezone(env('APP_TIMEZONE'))
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4)->filtersFormWidth(MaxWidth::FourExtraLarge)
             ->actions([
