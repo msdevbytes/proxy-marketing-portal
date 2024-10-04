@@ -118,7 +118,9 @@ class UserResource extends Resource
                     'sm' => 1
                 ])->description("Put user detail here"),
                 Section::make('Bank A/C Detail')->schema([
-                    Forms\Components\TextInput::make('bank_account_name')
+                    Forms\Components\TextInput::make('bank_name')
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('bank_account_holder_name')
                         ->maxLength(255),
                     Forms\Components\TextInput::make('bank_account_number')
                         ->maxLength(255),
@@ -134,11 +136,14 @@ class UserResource extends Resource
                 ]),
                 Section::make('Docs')->schema([
                     Forms\Components\FileUpload::make('image')
+                        ->label('Profile Picture')
                         ->image(),
-                    Forms\Components\FileUpload::make('cnic_image')
+                    Forms\Components\FileUpload::make('cnic_front_image')
+                        ->image(),
+                    Forms\Components\FileUpload::make('cnic_back_image')
                         ->image(),
                 ])->columns([
-                    'md' => 2,
+                    'md' => 3,
                     'sm' => 1
                 ]),
                 Section::make('Credencials')->schema([
