@@ -42,6 +42,10 @@ class ListUsers extends ListRecords
                 ->modifyQueryUsing(function ($query) {
                     return $query->role('PMM');
                 }),
+            'Manager' => Tab::make()
+                ->modifyQueryUsing(function ($query) {
+                    return $query->role('manager');
+                }),
         ];
     }
 }
