@@ -38,13 +38,13 @@ class UserResource extends Resource
                 Section::make('User')->schema([
 
                     Forms\Components\Select::make('roles')
-                        ->visible(Auth::user()?->checkPermissionTo('create User'))
+                        ->visible(Auth::user()->isManager() || Auth::user()->isSuperAdmin())
                         ->label('Role')
                         ->multiple()
                         ->placeholder("Select roles")
                         ->selectablePlaceholder(true)
                         ->preload()
-                        ->markAsRequired(Auth::user()?->checkPermissionTo('create User'))
+                        ->markAsRequired(Auth::user()->isManager() || Auth::user()->isSuperAdmin())
                         ->relationship('roles', 'name', fn(Builder $query) =>  $query->whereNotIn('name', ['Super Admin', 'manager']))
                         ->native(false),
                     Forms\Components\TextInput::make('name')
