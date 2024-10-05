@@ -64,7 +64,7 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Products')
                     ->icon('lucide-layers')
                     ->url('/admin/products')
-                    ->badge(fn() => (Auth::user()->isPMM() ? Auth::user()->products()->where('products.status', 1)->whereDate('marketing_end_date', '>=', Carbon::now())->count() : null))
+                    ->badge(fn() => (Auth::user()->isPMM() ? Auth::user()->products()->where('products.status', 1)->count() : null))
                     ->sort(0)
                     ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.products.index'))
             ])->darkMode(true)
