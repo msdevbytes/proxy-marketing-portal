@@ -47,6 +47,7 @@ class User extends Authenticatable implements FilamentUser
         'status',
         'acc_deactive_at',
         'email_verified_at',
+        'manager_id',
     ];
 
     /**
@@ -95,6 +96,62 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasRole('PMM');
     }
+    public function isManager(): bool
+    {
+        return $this->hasRole('manager');
+    }
+
+
+    /**
+     * This will give model's manager 
+     * @return BelongsTo
+     */
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'manager_id');
+    }
+
+    /**
+     * This will give model's manager, manager's manager, and so on until root.  
+     * @return BelongsTo
+     */
+    public function managerRecursive(): BelongsTo
+    {
+        return $this->manager()->with('managerRecursive');
+    }
+
+    /**
+     * Get current model's all recursive managers in a collection in flat structure.
+     */
+    public function managerRecursiveFlatten()
+    {
+        $result = collect();
+        $item = $this->managerRecursive;
+        if ($item instanceof User) {
+            $result->push($item);
+            $result = $result->merge($item->managerRecursiveFlatten());
+        }
+        return $result;
+    }
+
+    /**
+     * This will give model's Children
+     * @return HasMany
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(self::class, 'manager_id');
+    }
+
+    /**
+     * This will give model's Children, Children's Children and so on until last node. 
+     * @return HasMany
+     */
+    public function childrenRecursive(): HasMany
+    {
+        return $this->children()->with('childrenRecursive');
+    }
+
 
     function city(): BelongsTo
     {

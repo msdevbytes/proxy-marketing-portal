@@ -38,14 +38,14 @@ class UserResource extends Resource
                 Section::make('User')->schema([
 
                     Forms\Components\Select::make('roles')
-                        ->visible(Auth::user()?->isSuperAdmin())
+                        ->visible(Auth::user()?->checkPermissionTo('create User'))
                         ->label('Role')
                         ->multiple()
                         ->placeholder("Select roles")
                         ->selectablePlaceholder(true)
                         ->preload()
-                        ->markAsRequired(Auth::user()?->isSuperAdmin())
-                        ->relationship('roles', 'name', fn(Builder $query) =>  $query->where('name', '!=', 'Super Admin'))
+                        ->markAsRequired(Auth::user()?->checkPermissionTo('create User'))
+                        ->relationship('roles', 'name', fn(Builder $query) =>  $query->whereNotIn('name', ['Super Admin', 'manager']))
                         ->native(false),
                     Forms\Components\TextInput::make('name')
                         ->required()
@@ -149,8 +149,15 @@ class UserResource extends Resource
         return $table
             ->modifyQueryUsing(function (Builder $query) {
                 $query->withOutRole('Super Admin');
+                // if (Auth::user()->isManager()) {
+                //     $query->withOutRole('Super Admin')->where("manager_id", Auth::user()->id);
+                // } else {
+                //     $query->withOutRole('Super Admin');
+                // }
             })
             ->columns([
+                Tables\Columns\TextColumn::make('manager.name')
+                    ->searchable()->hidden(!Auth::user()->isSuperAdmin()),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
