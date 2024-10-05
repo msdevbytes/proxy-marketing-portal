@@ -45,7 +45,13 @@ class UserResource extends Resource
                         ->selectablePlaceholder(true)
                         ->preload()
                         ->markAsRequired(Auth::user()->isManager() || Auth::user()->isSuperAdmin())
-                        ->relationship('roles', 'name', fn(Builder $query) =>  $query->whereNotIn('name', ['Super Admin', 'manager']))
+                        ->relationship('roles', 'name', function (Builder $query) {
+                            if (Auth::user()->isSuperAdmin()) {
+                                return $query->whereNotIn('name', ['Super Admin']);
+                            } else {
+                                return $query->whereNotIn('name', ['Super Admin', 'manager']);
+                            }
+                        })
                         ->native(false),
                     Forms\Components\TextInput::make('name')
                         ->required()
