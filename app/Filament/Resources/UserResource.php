@@ -29,35 +29,6 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'User Management';
 
-    public static function canViewAny(): bool
-    {
-        return static::can('viewAny');
-    }
-
-    public static function canCreate(): bool
-    {
-        return Auth::user()?->isSuperAdmin();
-    }
-    public static function canEdit(Model $record): bool
-    {
-        return Auth::user()?->isSuperAdmin();
-    }
-
-    public static function canForceDeleteAny(): bool
-    {
-        return Auth::user()?->isSuperAdmin();
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return Auth::user()?->isSuperAdmin();
-    }
-
-    public function viewAny(User $user): bool
-    {
-        return Auth::user()?->isSuperAdmin();
-    }
-
 
     public static function form(Form $form): Form
     {
