@@ -21,7 +21,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->checkPermissionTo('view User (web)');
+        return $user->checkPermissionTo('view User');
     }
 
     /**
@@ -29,7 +29,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->checkPermissionTo('create User (web)');
+        return $user->checkPermissionTo('create User');
     }
 
     /**
@@ -37,7 +37,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->checkPermissionTo('update User (web)');
+        return $user->checkPermissionTo('update User');
     }
 
     /**
@@ -45,7 +45,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->checkPermissionTo('delete User (web)');
+        return $user->checkPermissionTo('delete User');
     }
 
     /**
@@ -53,7 +53,7 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->checkPermissionTo('restore User (web)');
+        return $user->checkPermissionTo('restore User');
     }
 
     /**
@@ -61,6 +61,6 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $model): bool
     {
-        return $user->checkPermissionTo('force-delete User (web)');
+        return $user->checkPermissionTo('force-delete User');
     }
 }
