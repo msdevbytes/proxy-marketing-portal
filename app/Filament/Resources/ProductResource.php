@@ -266,7 +266,7 @@ class ProductResource extends Resource
                     ->hidden(function (Product $product) {
                         return (!Auth::user()->checkProductReservation($product->id)  || $product->isProductDisabledOrMarketingEnd());
                     })
-                    ->color('danger')
+                    ->color('info')
                     ->disabled()
                     ->button()
                     ->label('Reserved')
