@@ -36,6 +36,9 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            ->databaseNotifications(true)
+            ->databaseNotificationsPolling("10s")
+            ->databaseTransactions(true)
             ->id('admin')
             ->path('admin')
             ->login(Login::class)

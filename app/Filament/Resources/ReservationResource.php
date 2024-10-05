@@ -106,9 +106,9 @@ class ReservationResource extends Resource
             ])
             ->actions([
                 Action::make('reserve')
-                    // ->hidden(function (Reservation $reservation) {
-                    //     return (Auth::user()->checkProductReservation($reservation->product->id) || Auth::user()->isSuperAdmin() || $reservation->product->isProductDisabledOrMarketingEnd());
-                    // })
+                    ->hidden(function (Reservation $reservation) {
+                        return (Auth::user()->isSuperAdmin() || $reservation->product->isProductDisabled());
+                    })
                     ->color('danger')
                     ->button()
                     ->label('Release')

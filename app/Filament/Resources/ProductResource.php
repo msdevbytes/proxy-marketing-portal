@@ -254,7 +254,7 @@ class ProductResource extends Resource
             ->actions([
                 Action::make('reserve')
                     ->hidden(function (Product $product) {
-                        return (Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin() || $product->isProductDisabledOrMarketingEnd());
+                        return (Auth::user()->checkProductReservation($product->id) || Auth::user()->isSuperAdmin() || $product->isProductDisabled());
                     })
                     ->color('info')
                     ->button()
@@ -264,7 +264,7 @@ class ProductResource extends Resource
 
                 Action::make('danger')
                     ->hidden(function (Product $product) {
-                        return (!Auth::user()->checkProductReservation($product->id)  || $product->isProductDisabledOrMarketingEnd());
+                        return (!Auth::user()->checkProductReservation($product->id)  || $product->isProductDisabled());
                     })
                     ->color('info')
                     ->disabled()
@@ -333,7 +333,7 @@ class ProductResource extends Resource
         $msg = "Product Reserved Successfully!";
         $color = "danger";
         $product = Product::find($product->id);
-        if (!$product->status && $product->isProductDisabledOrMarketingEnd()) {
+        if (!$product->status && $product->isProductDisabled()) {
             $msg = 'Product may not enabled or the marketing date is end';
         }
 

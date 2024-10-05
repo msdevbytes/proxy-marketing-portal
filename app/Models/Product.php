@@ -61,7 +61,7 @@ class Product extends Model
         return ',';
     }
 
-    function isProductDisabledOrMarketingEnd(): bool
+    function isProductDisabled(): bool
     {
         return !$this->status;
     }

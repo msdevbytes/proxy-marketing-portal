@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\OrderStatus;
+use App\Filament\Exports\OrderExporter;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Forms\Components\ImageView;
@@ -26,6 +27,7 @@ use Filament\Infolists;
 use Filament\Infolists\Components\Section as ComponentsSection;
 use Filament\Infolists\Infolist;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -259,6 +261,8 @@ class OrderResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ])->headerActions([
+                // ExportAction::make('Export')->exporter(OrderExporter::class),
             ]);
     }
 
