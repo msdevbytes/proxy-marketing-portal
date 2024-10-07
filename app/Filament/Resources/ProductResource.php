@@ -85,8 +85,8 @@ class ProductResource extends Resource
                             ->maxLength(255),
                         Forms\Components\TextInput::make('name')
                             ->maxLength(255),
-                        Forms\Components\TagsInput::make('keyword')->separator(Product::keywordSeparator())->color('info'),
-                        Forms\Components\TextInput::make('amz_sold_by')
+                        Forms\Components\TagsInput::make('keyword')->required()->separator(Product::keywordSeparator())->color('info'),
+                        Forms\Components\TextInput::make('amz_sold_by')->required()
                             ->maxLength(255),
 
                         Forms\Components\TextInput::make('asin')
@@ -95,7 +95,7 @@ class ProductResource extends Resource
                         Forms\Components\TextInput::make('seller')
                             ->maxLength(255),
                         Forms\Components\TextInput::make('product_price')
-                            ->required()
+
                             ->numeric(),
                     ])->columns(['md' => 4, 'sm' => 1]),
                 Section::make("Product Limits")->schema([
@@ -177,11 +177,9 @@ class ProductResource extends Resource
                 } else if (!Auth::user()->isSuperAdmin()) {
                     $query->where('status', 1);
                 }
-            })
+            })->recordUrl(fn() => null)->recordAction(null)
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Seller Name')
-                    ->searchable(),
+                ViewColumn::make('user')->view('tables.columns.user-info')->label('Seller'),
                 Tables\Columns\TextColumn::make('market.market')
                     ->sortable(),
 
@@ -203,7 +201,7 @@ class ProductResource extends Resource
                     ->separator(',')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('id')->label('Product ID')->searchable(),
-                Tables\Columns\ImageColumn::make('image')->circular(),
+                Tables\Columns\ImageColumn::make('image')->square()->simpleLightbox(),
                 Tables\Columns\IconColumn::make('is_expensive')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->boolean(),

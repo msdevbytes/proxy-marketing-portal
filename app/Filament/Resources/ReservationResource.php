@@ -89,8 +89,7 @@ class ReservationResource extends Resource
                     ->sortable(),
                 TextColumn::make('reservation_expiry')->view('tables.columns.reservation-timer')->alignCenter(),
 
-                Tables\Columns\ImageColumn::make('product.image')->circular(),
-
+                Tables\Columns\ImageColumn::make('product.image')->square()->simpleLightbox(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

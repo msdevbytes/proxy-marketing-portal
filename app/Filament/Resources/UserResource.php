@@ -154,12 +154,12 @@ class UserResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $query->withOutRole('Super Admin');
-                // if (Auth::user()->isManager()) {
-                //     $query->withOutRole('Super Admin')->where("manager_id", Auth::user()->id);
-                // } else {
-                //     $query->withOutRole('Super Admin');
-                // }
+                // $query->withOutRole('Super Admin');
+                if (Auth::user()->isManager()) {
+                    $query->withOutRole('Super Admin')->where("users.id", "!=", Auth::user()->id);
+                } else {
+                    $query->withOutRole('Super Admin');
+                }
             })
             ->columns([
                 Tables\Columns\TextColumn::make('manager.name')
@@ -188,7 +188,7 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\ImageColumn::make('image')->circular(),
+                Tables\Columns\ImageColumn::make('image')->circular()->simpleLightbox(),
                 Tables\Columns\ImageColumn::make('cnic_front_image')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ImageColumn::make('cnic_back_image')->toggleable(isToggledHiddenByDefault: true),

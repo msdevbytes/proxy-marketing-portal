@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Auth;
 use Carbon\Carbon;
 use Coduo\PHPHumanizer\NumberHumanizer;
 use Illuminate\Support\Collection;
@@ -52,15 +53,22 @@ class ProductStats extends Component
         $today = Carbon::today();
         $currentMonth = Carbon::now()->month;
 
-        return DB::table('products')
+        $stats =  DB::table('products')
             ->selectRaw("
-            SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as total_active,
-            SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as total_disabled,
-            SUM(CASE WHEN status = 1 AND DATE(created_at) = ? THEN 1 ELSE 0 END) as todays_active,
-            SUM(CASE WHEN status = 0 AND DATE(created_at) = ? THEN 1 ELSE 0 END) as todays_disabled,
-            SUM(CASE WHEN status = 1 AND MONTH(created_at) = ? THEN 1 ELSE 0 END) as monthly_active,
-            SUM(CASE WHEN status = 0 AND MONTH(created_at) = ? THEN 1 ELSE 0 END) as monthly_disabled
-        ", [$today, $today, $currentMonth, $currentMonth])
-            ->first();
+            SUM(CASE WHEN products.status = 1 THEN 1 ELSE 0 END) as total_active,
+            SUM(CASE WHEN products.status = 0 THEN 1 ELSE 0 END) as total_disabled,
+            SUM(CASE WHEN products.status = 1 AND DATE(products.created_at) = ? THEN 1 ELSE 0 END) as todays_active,
+            SUM(CASE WHEN products.status = 0 AND DATE(products.created_at) = ? THEN 1 ELSE 0 END) as todays_disabled,
+            SUM(CASE WHEN products.status = 1 AND MONTH(products.created_at) = ? THEN 1 ELSE 0 END) as monthly_active,
+            SUM(CASE WHEN products.status = 0 AND MONTH(products.created_at) = ? THEN 1 ELSE 0 END) as monthly_disabled
+        ", [$today, $today, $currentMonth, $currentMonth]);
+
+        if (Auth::user()->isPMM()) {
+            $stats = $stats->where('products.user_id', Auth::user()->id)->first();
+        } else if (Auth::user()->isSuperAdmin() || Auth::user()->isPM()) {
+            $stats = $stats->first();
+        }
+
+        return $stats;
     }
 }

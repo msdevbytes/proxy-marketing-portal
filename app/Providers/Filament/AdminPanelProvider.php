@@ -29,6 +29,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use SolutionForest\FilamentSimpleLightBox\SimpleLightBoxPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -53,7 +54,8 @@ class AdminPanelProvider extends PanelProvider
             ->maxContentWidth(MaxWidth::Full)
             ->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
-                \Hasnayeen\Themes\ThemesPlugin::make()
+                \Hasnayeen\Themes\ThemesPlugin::make(),
+                SimpleLightBoxPlugin::make()
             ])
             ->navigationItems([
                 NavigationItem::make('Create Product')

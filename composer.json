@@ -24,6 +24,7 @@
         "mallardduck/blade-lucide-icons": "^1.23",
         "malzariey/filament-daterangepicker-filter": "^3.0",
         "phpsa/filament-password-reveal": "^2.1",
+        "solution-forest/filament-simplelightbox": "^0.0.10",
         "spatie/filament-simple-stats": "^0.1.4",
         "spatie/laravel-activitylog": "^4.8",
         "webbingbrasil/filament-copyactions": "^3.0"

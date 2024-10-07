@@ -221,7 +221,7 @@ class OrderResource extends Resource
                     ->dateTime()
                     ->sortable()->label('Created/Modified Date'),
                 Tables\Columns\TextColumn::make('status')->searchable(),
-                Tables\Columns\ImageColumn::make('invoice_image')->label("Order screenshot"),
+                Tables\Columns\ImageColumn::make('invoice_image')->label("Order screenshot")->square()->simpleLightbox(),
                 Tables\Columns\IconColumn::make('is_customer_scammer')
                     ->boolean()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('review_type_commission')
@@ -229,11 +229,11 @@ class OrderResource extends Resource
                     ->sortable()->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\ImageColumn::make('review_image')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)->square()->simpleLightbox(),
                 Tables\Columns\ImageColumn::make('refund_image')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)->square()->simpleLightbox(),
                 Tables\Columns\ImageColumn::make('buyer_verification_image')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)->square()->simpleLightbox(),
                 Tables\Columns\TextColumn::make('review_link')
                     ->searchable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('deleted_at')
