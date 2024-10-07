@@ -16,10 +16,10 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::firstOrCreate(['name' => 'PMM']);
-        Role::firstOrCreate(['name' => 'PM']);
-        $r = Role::firstOrCreate(['name' => 'Super Admin']);
-        $admin = User::factory()->firstOrCreate([
+        Role::firstOrNew(['name' => 'PMM']);
+        Role::firstOrNew(['name' => 'PM']);
+        $r = Role::firstOrNew(['name' => 'Super Admin']);
+        $admin = User::factory()->firstOrNew([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('Secret@123')
