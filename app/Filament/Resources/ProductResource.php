@@ -150,7 +150,8 @@ class ProductResource extends Resource
                                     if ($get('market_id')) {
                                         $market = \App\Models\Market::where('id', $get('market_id'))->first();
                                         if ($value < $market->commission) {
-                                            $fail("The " . Str::replace('data.', '', $attribute) . " can not be lessthen {$market->commission}.");
+                                            $comm = Str::replace('data.', '', $attribute);
+                                            $fail("The {$comm} can not be lessthen {$market->commission}.");
                                         }
                                     }
                                 },
