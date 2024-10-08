@@ -63,7 +63,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('lucide-plus')
                     ->url('/admin/products/create')
                     ->sort(1)
-                    ->hidden(fn() => Auth::user()->isPM())
+                    ->hidden(fn() => !Auth::user()->checkPermissionTo('create Product'))
                     ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.products.create')),
                 NavigationItem::make('All Products')
                     ->group('Products')

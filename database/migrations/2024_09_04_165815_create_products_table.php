@@ -26,7 +26,7 @@ return new class extends Migration
             $table->integer("sale_limit_overall")->default(0);
             $table->integer("commission")->default(0);
             $table->boolean("is_expensive")->default(false);
-            $table->decimal("product_price", 8, 2)->default(0);
+            $table->decimal("product_price", 8, 2)->nullable()->default(0);
             $table->string("amazone_short_link")->nullable();
             $table->longText("review_instructions")->nullable();
             $table->longText("refund_conditions")->nullable();
