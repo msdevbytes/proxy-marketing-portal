@@ -48,6 +48,9 @@ class MarketResource extends Resource
                     ->afterStateUpdated(function (Set $set, $state) {
                         $set('slug', Str::slug($state));
                     }),
+                Forms\Components\TextInput::make('commission')
+                    ->required()
+                    ->numeric(),
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->readOnly()
@@ -65,6 +68,8 @@ class MarketResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('market')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('commission')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),

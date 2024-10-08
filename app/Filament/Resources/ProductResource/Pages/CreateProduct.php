@@ -16,6 +16,7 @@ class CreateProduct extends CreateRecord
     {
 
         $data['user_id'] = $data['user_id'] ?? Auth::user()->id;
+        $data['product_price'] = $data['product_price'] ?? 0;
 
         return parent::mutateFormDataBeforeCreate($data);
     }

@@ -24,8 +24,8 @@ class ViewProduct extends ViewRecord
                     Product Name: %s
                     Product Brand: %s
                     Product Link: %s
-                    Amazone Sold by: %s
-                    Amazone Keyword: %s
+                    Amazon Sold by: %s
+                    Amazon Keyword: %s
                 ',
                     nl2br($record->id),
                     nl2br($record->name),

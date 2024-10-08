@@ -5,18 +5,22 @@ namespace App\Filament\Resources;
 use App\Enums\OrderStatus;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Models\Market;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Reservation;
 use App\Models\User;
 use Auth;
 use Carbon\Carbon;
+use Closure;
 use Filament\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\ActionSize;
@@ -32,8 +36,10 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use Str;
 use Symfony\Component\Finder\Iterator\DateRangeFilterIterator;
 use Webbingbrasil\FilamentCopyActions\Tables\Actions\CopyAction;
 
@@ -111,13 +117,10 @@ class ProductResource extends Resource
                     Forms\Components\TextInput::make('sale_limit_overall')
                         ->required()
                         ->numeric(),
-
-                    Forms\Components\TextInput::make('commission')
-                        ->required()
-                        ->numeric(),
                 ])->columns(['md' => 4, 'sm' => 1]),
                 Section::make("Product Links")->schema([
                     Forms\Components\TextInput::make('amazone_short_link')
+                        ->label('Amazon Short Link')
                         ->url()
                         ->maxLength(255),
                     Forms\Components\TextInput::make('product_link')
@@ -128,19 +131,39 @@ class ProductResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('category_id')
                             ->required()
+                            ->searchable()
                             ->native(false)
+                            ->preload()
                             ->relationship('category', titleAttribute: 'category'),
                         Forms\Components\Select::make('market_id')
+                            ->searchable()
                             ->required()
                             ->native(false)
+                            ->preload()
+                            ->live()
                             ->relationship('market', titleAttribute: 'market'),
-                    ])->columns(['md' => 2, 'sm' => 1]),
+                        Forms\Components\TextInput::make('commission')
+                            ->numeric()
+                            ->live()
+                            ->rules([
+                                fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                    if ($get('market_id')) {
+                                        $market = \App\Models\Market::where('id', $get('market_id'))->first();
+                                        if ($value < $market->commission) {
+                                            $fail("The " . Str::replace('data.', '', $attribute) . " can not be lessthen {$market->commission}.");
+                                        }
+                                    }
+                                },
+                            ])
+                            ->required(),
+                    ])->columns(['md' => 3, 'sm' => 1]),
 
                 Section::make('Images')
                     ->schema([
                         Forms\Components\FileUpload::make('image')
                             ->image(),
                         Forms\Components\FileUpload::make('amazone_image')
+                            ->label('Amazon Image')
                             ->image(),
                     ])->label("Images")->columns(2),
                 Section::make("Instructions & Condtions")->schema([

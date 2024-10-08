@@ -94,7 +94,7 @@ class OrderResource extends Resource
                                 return $status;
                             })->native(false),
                         Forms\Components\TextInput::make('amz_order_number')
-                            ->label('Amazone Order Number')
+                            ->label('Amazon Order Number')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('review_link')
@@ -128,7 +128,7 @@ class OrderResource extends Resource
                     Split::make([
                         Section::make('Info')->schema([
                             Forms\Components\TextInput::make('amz_order_number')
-                                ->label('Amazone Order Number')
+                                ->label('Amazon Order Number')
                                 ->required()
                                 ->maxLength(255),
 
