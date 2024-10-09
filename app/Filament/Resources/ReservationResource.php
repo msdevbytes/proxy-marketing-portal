@@ -78,7 +78,7 @@ class ReservationResource extends Resource
                 }
             })
             ->columns([
-                Tables\Columns\TextColumn::make('reservation_number')
+                Tables\Columns\TextColumn::make('id')->label('Reservation Number')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->searchable()
