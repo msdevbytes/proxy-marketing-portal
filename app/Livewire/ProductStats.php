@@ -33,13 +33,13 @@ class ProductStats extends Component
         $this->description = 'Custom stats description';
         $this->link = 'product-stats';
         $this->header = [
-            "Active Products" => metricSuffix($stats->total_active),
-            "Disabled Products" => metricSuffix($stats->total_disabled)
+            "Active Products" => metricSuffix($stats?->total_active),
+            "Disabled Products" => metricSuffix($stats?->total_disabled)
         ];
         $this->data = collect([
-            ['icon' => 'bi-compass', 'title' => 'Today: Active / Disabled ', 'value' => sprintf("%s / %s", metricSuffix($stats->todays_active), metricSuffix($stats->todays_disabled))],
-            ['icon' => 'bi-calendar-check', 'title' => Carbon::now()->monthName . ': Active / Disabled', 'value' => sprintf("%s / %s", metricSuffix($stats->monthly_active), metricSuffix($stats->monthly_disabled))],
-            ['icon' => 'bi-calendar4-event', 'title' => 'Overall: Active / Disabled', 'value' => sprintf("%s / %s", metricSuffix($stats->total_active), metricSuffix($stats->total_disabled))],
+            ['icon' => 'bi-compass', 'title' => 'Today: Active / Disabled ', 'value' => sprintf("%s / %s", metricSuffix($stats?->todays_active), metricSuffix($stats?->todays_disabled))],
+            ['icon' => 'bi-calendar-check', 'title' => Carbon::now()->monthName . ': Active / Disabled', 'value' => sprintf("%s / %s", metricSuffix($stats?->monthly_active), metricSuffix($stats?->monthly_disabled))],
+            ['icon' => 'bi-calendar4-event', 'title' => 'Overall: Active / Disabled', 'value' => sprintf("%s / %s", metricSuffix($stats?->total_active), metricSuffix($stats?->total_disabled))],
         ]);
     }
 

@@ -31,12 +31,12 @@ class OrderStats extends Component
         $this->description = 'Custom stats description';
         $this->link = 'product-stats';
         $this->header = [
-            "Revenue Comission" => metricSuffix($stats->total_commission),
+            "Revenue Comission" => metricSuffix($stats?->total_commission),
         ];
         $this->data = collect([
-            ['icon' => 'bi-compass', 'title' => 'Today', 'value' =>  metricSuffix($stats->todays_total)],
-            ['icon' => 'bi-calendar-check', 'title' => Carbon::now()->monthName, 'value' => metricSuffix($stats->month_total)],
-            ['icon' => 'bi-calendar4-event', 'title' => 'Overall', 'value' => metricSuffix($stats->total_commission)],
+            ['icon' => 'bi-compass', 'title' => 'Today', 'value' =>  metricSuffix($stats?->todays_total)],
+            ['icon' => 'bi-calendar-check', 'title' => Carbon::now()->monthName, 'value' => metricSuffix($stats?->month_total)],
+            ['icon' => 'bi-calendar4-event', 'title' => 'Overall', 'value' => metricSuffix($stats?->total_commission)],
         ]);
     }
 
