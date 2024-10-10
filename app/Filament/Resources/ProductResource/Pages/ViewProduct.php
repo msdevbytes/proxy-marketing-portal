@@ -20,19 +20,19 @@ class ViewProduct extends ViewRecord
             CopyAction::make('Copy')->copyable(function ($record) {
                 return sprintf(
                     '
-                    Product ID: %s
-                    Product Name: %s
-                    Product Brand: %s
-                    Product Link: %s
-                    Amazon Sold by: %s
-                    Amazon Keyword: %s
+                    %s
+                    %s
+                    %s
+                    %s
+                    %s
+                    %s
                 ',
-                    nl2br($record->id),
-                    nl2br($record->name),
-                    nl2br($record->product_brand),
-                    nl2br($record->product_link),
-                    nl2br($record->seller),
-                    nl2br($record->keyword)
+                    nl2br("Product ID: " . $record->id),
+                    nl2br("Product Name: " . $record->name),
+                    nl2br("Product Brand: " . $record->product_brand),
+                    nl2br("Product Link: " . $record->product_link),
+                    nl2br("Amazon Sold by: " . $record->seller),
+                    nl2br("Amazon Keyword: " . $record->keyword)
                 );
             })->button()->color('primary')
         ];
