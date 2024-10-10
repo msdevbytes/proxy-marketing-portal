@@ -18,6 +18,7 @@ use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -161,11 +162,11 @@ class ProductResource extends Resource
 
                 Section::make('Images')
                     ->schema([
-                        Forms\Components\FileUpload::make('image')
-                            ->image()->downloadable(true),
-                        Forms\Components\FileUpload::make('amazone_image')
-                            ->label('Amazon Image')
-                            ->image()->downloadable(true),
+                        ViewField::make('image')->view('forms.components.product-image-view')->hidden(request()->route()->named('filament.admin.resources.products.create')),
+                        ViewField::make('amazone_image')->view('forms.components.product-amazon-image-view')->hidden(request()->route()->named('filament.admin.resources.products.create')),
+
+                        Forms\Components\FileUpload::make('image')->image()->previewable(request()->route()->named('filament.admin.resources.products.create')),
+                        Forms\Components\FileUpload::make('amazone_image')->label('Amazon Image')->image()->previewable(request()->route()->named('filament.admin.resources.products.create')),
                     ])->label("Images")->columns(2),
                 Section::make("Instructions & Condtions")->schema([
                     Forms\Components\Textarea::make('review_instructions')
