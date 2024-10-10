@@ -58,8 +58,6 @@ class OrderStats extends Component
         ", [$today, $currentMonth])->where('orders.status', '=', $this->orderStatus);
 
         if (Auth::user()->isSuperAdmin() || Auth::user()->isManager()) {
-
-            dump(Auth::user()->isManager());
             $stats = $stats->first();
         } else if (Auth::user()->isPMM()) {
             $stats = $stats->where('products.user_id', Auth::user()->id)->first();
