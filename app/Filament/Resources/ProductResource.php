@@ -162,10 +162,10 @@ class ProductResource extends Resource
                 Section::make('Images')
                     ->schema([
                         Forms\Components\FileUpload::make('image')
-                            ->image(),
+                            ->image()->downloadable(true),
                         Forms\Components\FileUpload::make('amazone_image')
                             ->label('Amazon Image')
-                            ->image(),
+                            ->image()->downloadable(true),
                     ])->label("Images")->columns(2),
                 Section::make("Instructions & Condtions")->schema([
                     Forms\Components\Textarea::make('review_instructions')
