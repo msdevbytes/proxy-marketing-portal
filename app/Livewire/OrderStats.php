@@ -57,7 +57,7 @@ class OrderStats extends Component
             SUM(CASE WHEN orders.status = '" . $this->orderStatus . "' AND MONTH(orders.created_at) = ? THEN 1 ELSE 0 END) as month_total
         ", [$today, $currentMonth])->where('orders.status', '=', $this->orderStatus);
 
-        if (Auth::user()->isSuperAdmin()) {
+        if (Auth::user()->isSuperAdmin() || Auth::user()->isManager()) {
             $stats = $stats->first();
         } else if (Auth::user()->isPMM()) {
             $stats = $stats->where('products.user_id', Auth::user()->id)->first();
