@@ -65,7 +65,7 @@ class ProductStats extends Component
 
         if (Auth::user()->isPMM()) {
             $stats = $stats->where('products.user_id', Auth::user()->id)->first();
-        } else if (Auth::user()->isSuperAdmin() || Auth::user()->isPM()) {
+        } else {
             $stats = $stats->first();
         }
 
