@@ -9,4 +9,6 @@ class OrdersReport extends Page
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.orders-report';
+
+    protected static ?int $navigationSort = 3;
 }

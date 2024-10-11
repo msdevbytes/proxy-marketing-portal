@@ -15,6 +15,16 @@ class Dashboard extends BaseDashboard
 {
     use HasFiltersForm;
 
+    protected static ?string $navigationIcon = 'carbon-dashboard-reference';
+
+    protected static ?string $navigationLabel = "Admin Dashboard";
+
+    protected static ?string $title = 'Admin Dashboard';
+
+    protected static ?string $slug = 'admin-dashboard';
+
+    protected static string $routePath = 'admin-dashboard';
+
     public static function canAccess(): bool
     {
         return Auth::user()->isSuperAdmin();

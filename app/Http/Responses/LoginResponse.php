@@ -16,9 +16,9 @@ class LoginResponse implements LoginResponseContract
     public function toResponse($request)
     {
         if (!Auth::user()->isSuperAdmin()) {
-            return redirect()->route('filament.admin.pages..dashboard');
+            return redirect()->route('filament.admin.home');
         } else {
-            return redirect()->intended('/admin');
+            return redirect()->intended(route('filament.admin.pages.admin-dashboard'));
         }
     }
 }
