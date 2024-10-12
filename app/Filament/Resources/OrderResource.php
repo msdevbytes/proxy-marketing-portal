@@ -290,7 +290,7 @@ class OrderResource extends Resource
                         Infolists\Components\Actions::make([
                             Infolists\Components\Actions\Action::make('Copy')
                                 ->alpineClickHandler(fn(Order $order) => '
-                            window.navigator.clipboard.writeText("' . implode(', ', ['amz_order_number' => 'Amz order number: ' . $order->amz_order_number, 'customer_email' => 'Customer email: ' . $order->customer_email]) . '");
+                            window.navigator.clipboard.writeText("' . implode(' ', ['amz_order_number' => 'Amz order number: \n' . $order->amz_order_number, 'customer_email' => '\n Customer email: \n' . $order->customer_email]) . '");
                             $tooltip(\'Copied\', {
                                 theme: $store.theme,
                                 timeout: 2000,
