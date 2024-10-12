@@ -36,7 +36,7 @@ class ViewProduct extends ViewRecord
                     nl2br("Amazon Keyword: "),
                     nl2br($record->keyword),
                     nl2br("Amazon Sold by: "),
-                    nl2br($record->seller),
+                    nl2br($record->user?->name),
                     nl2br("Product Link: "),
                     nl2br($record->product_link),
                     nl2br("Product Brand: "),
