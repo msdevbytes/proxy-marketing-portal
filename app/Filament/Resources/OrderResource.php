@@ -304,14 +304,14 @@ class OrderResource extends Resource
                         'sm' => 1
                     ]),
                 ComponentsSection::make('Seller Detail')->schema([
-                    Infolists\Components\TextEntry::make('user.name')->label('PMM Name'),
+                    Infolists\Components\TextEntry::make('user.name')->label('PM Name')->hidden(Auth::user()->isPM()),
+                    Infolists\Components\TextEntry::make('seller.name')->label('PMM Name')->hidden(Auth::user()->isPMM()),
                     Infolists\Components\TextEntry::make('product.seller')->label('Seller Name'),
                 ])->columns([
                     'md' => 2,
                     'sm' => 1
                 ]),
                 ComponentsSection::make('Order Detail')->schema([
-
                     Infolists\Components\TextEntry::make('is_customer_scammer')->badge()->color(fn(string $state): string => match ($state) {
                         'Yes' => 'danger',
                         'No' => 'success'
