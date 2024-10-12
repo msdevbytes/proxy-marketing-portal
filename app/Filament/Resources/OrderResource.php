@@ -329,10 +329,10 @@ class OrderResource extends Resource
                 ]),
 
                 ComponentsSection::make('Images')->schema([
-                    Infolists\Components\ImageEntry::make('invoice_image')->label("Order screenshot")->maxWidth(100),
-                    Infolists\Components\ImageEntry::make('review_image')->maxWidth(100),
-                    Infolists\Components\ImageEntry::make('buyer_verification_image')->maxWidth(100),
-                    Infolists\Components\ImageEntry::make('refund_image')->maxWidth(100),
+                    Infolists\Components\ImageEntry::make('invoice_image')->label("Order screenshot")->maxWidth(100)->simpleLightbox(),
+                    Infolists\Components\ImageEntry::make('review_image')->maxWidth(100)->simpleLightbox(),
+                    Infolists\Components\ImageEntry::make('buyer_verification_image')->maxWidth(100)->simpleLightbox(),
+                    Infolists\Components\ImageEntry::make('refund_image')->maxWidth(100)->simpleLightbox(),
                 ])->columns(4),
             ]);
     }
