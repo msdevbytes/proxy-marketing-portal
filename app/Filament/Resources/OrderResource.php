@@ -285,14 +285,6 @@ class OrderResource extends Resource
                             return redirect()->route('filament.admin.resources.orders.edit', $order->id);
                         }),
                 ])->columnSpanFull()->alignRight(),
-                ComponentsSection::make('Seller Detail')->schema([
-                    Infolists\Components\TextEntry::make('user.email')->label('Seller Email'),
-                    Infolists\Components\TextEntry::make('user.name')->label('Seller Name'),
-                ])->columns([
-                    'md' => 2,
-                    'sm' => 1
-                ]),
-
                 ComponentsSection::make('Copyable Fields')
                     ->schema([
                         Infolists\Components\Actions::make([
@@ -311,6 +303,13 @@ class OrderResource extends Resource
                         'md' => 3,
                         'sm' => 1
                     ]),
+                ComponentsSection::make('Seller Detail')->schema([
+                    Infolists\Components\TextEntry::make('user.name')->label('PMM Name'),
+                    Infolists\Components\TextEntry::make('product.seller')->label('Seller Name'),
+                ])->columns([
+                    'md' => 2,
+                    'sm' => 1
+                ]),
                 ComponentsSection::make('Order Detail')->schema([
 
                     Infolists\Components\TextEntry::make('is_customer_scammer')->badge()->color(fn(string $state): string => match ($state) {
