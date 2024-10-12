@@ -33,16 +33,14 @@ class ViewProduct extends ViewRecord
                 ',
                     nl2br("Product ID:"),
                     nl2br($record->id),
-                    nl2br("Product Name: "),
-                    nl2br($record->name),
-                    nl2br("Product Brand: "),
-                    nl2br($record->product_brand),
-                    nl2br("Product Link: "),
-                    nl2br($record->product_link),
+                    nl2br("Amazon Keyword: "),
+                    nl2br($record->keyword),
                     nl2br("Amazon Sold by: "),
                     nl2br($record->seller),
-                    nl2br("Amazon Keyword: "),
-                    nl2br($record->keyword)
+                    nl2br("Product Link: "),
+                    nl2br($record->product_link),
+                    nl2br("Product Brand: "),
+                    nl2br($record->product_brand),
                 );
             })->button()->color('primary')
         ];

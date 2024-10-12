@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Order extends Model
 {
@@ -50,6 +52,19 @@ class Order extends Model
     function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    function seller()
+    {
+        return $this->product->user();
+    }
+
+
+    protected function isCustomerScammer(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => $value ? 'Yes' : 'No',
+        );
     }
 
 

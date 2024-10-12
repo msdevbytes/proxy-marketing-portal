@@ -206,6 +206,7 @@ class OrderResource extends Resource
                     ->dateTime()
                     ->sortable(),
                 ViewColumn::make('user')->view('tables.columns.user-info'),
+                ViewColumn::make('seller')->view('tables.columns.user-info'),
 
                 Tables\Columns\TextColumn::make('amz_order_number')
                     ->searchable(),
@@ -283,31 +284,56 @@ class OrderResource extends Resource
                         ->action(function (Order $order) {
                             return redirect()->route('filament.admin.resources.orders.edit', $order->id);
                         }),
-                    Infolists\Components\Actions\Action::make('Copy')
-                        ->alpineClickHandler(fn(Order $order) => '
-                    window.navigator.clipboard.writeText("' . implode(', ', ['amz_order_number' => $order->amz_order_number, 'customer_email' => $order->customer_email]) . '");
-                    $tooltip(\'Copied\', {
-                        theme: $store.theme,
-                        timeout: 2000,
-                    })
-                ')
                 ])->columnSpanFull()->alignRight(),
-                Infolists\Components\TextEntry::make('amz_order_number'),
-                Infolists\Components\TextEntry::make('customer_email'),
-                Infolists\Components\TextEntry::make('is_customer_scammer')->badge(),
-                Infolists\Components\TextEntry::make('review_type_commission'),
-                Infolists\Components\TextEntry::make('status'),
-                Infolists\Components\TextEntry::make('review_link'),
-                Infolists\Components\TextEntry::make('market_id'),
-                Infolists\Components\TextEntry::make('user.email'),
-                Infolists\Components\TextEntry::make('product_id'),
-                Infolists\Components\TextEntry::make('remarks')->columnSpanFull(),
+                ComponentsSection::make('Seller Detail')->schema([
+                    Infolists\Components\TextEntry::make('user.email')->label('Seller Email'),
+                    Infolists\Components\TextEntry::make('user.name')->label('Seller Name'),
+                ])->columns([
+                    'md' => 2,
+                    'sm' => 1
+                ]),
+
+                ComponentsSection::make('Copyable Fields')
+                    ->schema([
+                        Infolists\Components\Actions::make([
+                            Infolists\Components\Actions\Action::make('Copy')
+                                ->alpineClickHandler(fn(Order $order) => '
+                            window.navigator.clipboard.writeText("' . implode(', ', ['amz_order_number' => 'Amz order number: ' . $order->amz_order_number, 'customer_email' => 'Customer email: ' . $order->customer_email]) . '");
+                            $tooltip(\'Copied\', {
+                                theme: $store.theme,
+                                timeout: 2000,
+                            })
+                        ')->color('info')->icon('bi-copy')
+                        ]),
+                        Infolists\Components\TextEntry::make('amz_order_number'),
+                        Infolists\Components\TextEntry::make('customer_email'),
+                    ])->columns([
+                        'md' => 3,
+                        'sm' => 1
+                    ]),
+                ComponentsSection::make('Order Detail')->schema([
+
+                    Infolists\Components\TextEntry::make('is_customer_scammer')->badge()->color(fn(string $state): string => match ($state) {
+                        'Yes' => 'danger',
+                        'No' => 'success'
+                    }),
+                    Infolists\Components\TextEntry::make('review_type_commission'),
+                    Infolists\Components\TextEntry::make('status'),
+                    Infolists\Components\TextEntry::make('review_link'),
+                    Infolists\Components\TextEntry::make('market.market'),
+
+                    Infolists\Components\TextEntry::make('product_id'),
+                    Infolists\Components\TextEntry::make('remarks')->columnSpanFull(),
+                ])->columns([
+                    'md' => 2,
+                    'sm' => 1
+                ]),
 
                 ComponentsSection::make('Images')->schema([
-                    Infolists\Components\ImageEntry::make('invoice_image')->label("Order screenshot"),
-                    Infolists\Components\ImageEntry::make('review_image'),
-                    Infolists\Components\ImageEntry::make('buyer_verification_image'),
-                    Infolists\Components\ImageEntry::make('refund_image'),
+                    Infolists\Components\ImageEntry::make('invoice_image')->label("Order screenshot")->maxWidth(100),
+                    Infolists\Components\ImageEntry::make('review_image')->maxWidth(100),
+                    Infolists\Components\ImageEntry::make('buyer_verification_image')->maxWidth(100),
+                    Infolists\Components\ImageEntry::make('refund_image')->maxWidth(100),
                 ])->columns(4),
             ]);
     }
