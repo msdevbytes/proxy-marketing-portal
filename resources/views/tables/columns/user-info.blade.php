@@ -1,5 +1,6 @@
 @vite('resources/css/app.css')
-<div class="flex items-center justify-between gap-3 p-3 mx-2 border w-full rounded-md border-gray-700">
+<div
+    class="flex items-center justify-between gap-3 p-3 mx-2 border w-full rounded-md border-gray-300 dark:border-gray-700">
     <span class="text-center">
         {{ $getState()->name }}
     </span>
