@@ -247,6 +247,14 @@ class OrderResource extends Resource
                 //     return $user->role('PMM');
                 // })->hidden(Auth::user()->isPMM()),
                 SelectFilter::make('market')->relationship('market', 'market'),
+                SelectFilter::make('orders.status')->options(function () {
+                    $status = [];
+                    foreach (OrderStatus::toArray() as $case) {
+                        $status[$case] = $case;
+                    }
+
+                    return $status;
+                }),
                 // DateRangeFilter::make('created_at')
                 //     ->label('Date Range')
                 //     ->autoApply(false)
