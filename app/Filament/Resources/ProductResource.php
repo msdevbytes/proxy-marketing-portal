@@ -98,7 +98,11 @@ class ProductResource extends Resource
                             ->label("ASIN")
                             ->maxLength(255),
                         Forms\Components\TextInput::make('seller')
-                            ->maxLength(255),
+                            ->maxLength(255)->hidden(Auth::user()->isPM()),
+                        Forms\Components\Select::make('user_id')
+                            ->label('Seller')
+                            ->relationship('user', titleAttribute: 'name')
+                            ->visible(Auth::user()->isPM()),
                         Forms\Components\TextInput::make('product_price')
 
                             ->numeric(),
