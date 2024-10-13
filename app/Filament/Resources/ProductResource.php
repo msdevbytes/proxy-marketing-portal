@@ -167,8 +167,8 @@ class ProductResource extends Resource
                         ViewField::make('image')->view('forms.components.product-image-view')->hidden(request()->route()->named('filament.admin.resources.products.create')),
                         ViewField::make('amazone_image')->view('forms.components.product-amazon-image-view')->hidden(request()->route()->named('filament.admin.resources.products.create')),
 
-                        Forms\Components\FileUpload::make('image')->image()->previewable(request()->route()->named('filament.admin.resources.products.create')),
-                        Forms\Components\FileUpload::make('amazone_image')->label('Amazon Image')->image()->previewable(request()->route()->named('filament.admin.resources.products.create')),
+                        Forms\Components\FileUpload::make('image')->image()->required()->previewable(request()->route()->named('filament.admin.resources.products.create')),
+                        Forms\Components\FileUpload::make('amazone_image')->required()->label('Amazon Image')->image()->previewable(request()->route()->named('filament.admin.resources.products.create')),
                     ])->label("Images")->columns(2),
                 Section::make("Instructions & Condtions")->schema([
                     Forms\Components\Textarea::make('review_instructions')

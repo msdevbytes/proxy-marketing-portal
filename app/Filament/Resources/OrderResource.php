@@ -70,6 +70,7 @@ class OrderResource extends Resource
                     Section::make('Customer Detail')->schema([
                         Forms\Components\TextInput::make('customer_email')
                             ->email()
+                            ->required()
                             ->maxLength(255),
                         Forms\Components\Toggle::make('is_customer_scammer')
                             ->onColor('danger')
