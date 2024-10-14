@@ -41,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotificationsPolling("10s")
             ->databaseTransactions(true)
             ->id('admin')
-            ->path('admin')
+            ->path('171b3ff2-0a3c-40d3-a2c7-0dd61c7d09a3')
             ->login(Login::class)
             ->registration(Register::class)
             ->profile(isSimple: false)
