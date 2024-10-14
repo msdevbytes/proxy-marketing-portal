@@ -61,7 +61,7 @@ class ProductStats extends Component
             SUM(CASE WHEN products.status = 0 AND DATE(products.created_at) = ? THEN 1 ELSE 0 END) as todays_disabled,
             SUM(CASE WHEN products.status = 1 AND MONTH(products.created_at) = ? THEN 1 ELSE 0 END) as monthly_active,
             SUM(CASE WHEN products.status = 0 AND MONTH(products.created_at) = ? THEN 1 ELSE 0 END) as monthly_disabled
-        ", [$today, $today, $currentMonth, $currentMonth]);
+        ", [$today, $today, $currentMonth, $currentMonth])->whereNull('products.deleted_at');
 
         if (Auth::user()->isPMM()) {
             $stats = $stats->where('products.user_id', Auth::user()->id)->first();

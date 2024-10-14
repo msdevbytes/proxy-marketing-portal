@@ -55,7 +55,7 @@ class OrderStats extends Component
             if(sum(products.commission), sum(products.commission), 0) as total_commission,
             SUM(CASE WHEN orders.status = '" . $this->orderStatus . "' AND DATE(orders.created_at) = ? THEN 1 ELSE 0 END) as todays_total,
             SUM(CASE WHEN orders.status = '" . $this->orderStatus . "' AND MONTH(orders.created_at) = ? THEN 1 ELSE 0 END) as month_total
-        ", [$today, $currentMonth])->where('orders.status', '=', $this->orderStatus);
+        ", [$today, $currentMonth])->where('orders.status', '=', $this->orderStatus)->whereNull('orders.deleted_at');
 
         if (Auth::user()->isSuperAdmin() || Auth::user()->isManager()) {
             $stats = $stats->first();
