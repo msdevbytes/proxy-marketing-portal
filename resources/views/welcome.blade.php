@@ -11,11 +11,11 @@
                         <div class="flex-col justify-start items-center gap-2.5 flex">
                             <h2
                                 class="text-center text-emerald-400 md:text-6xl text-5xl font-bold font-manrope leading-normal">
-                                Coming Soon</h2>
-                            <p class="text-center text-gray-500 text-base font-normal leading-relaxed">Just 20 days remaining
-                                until the big reveal of our new product!</p>
+                                Welcome</h2>
+                            <p class="text-center text-gray-500 text-base font-normal leading-relaxed">to HS Masrketing
+                                Expert</p>
                         </div>
-                        <div class="flex items-start justify-center w-full gap-2 count-down-main">
+                        {{-- <div class="flex items-start justify-center w-full gap-2 count-down-main">
                             <div class="timer flex flex-col gap-0.5">
                                 <div class="">
                                     <h3
@@ -66,12 +66,12 @@
                                         Me</span>
                                 </button>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
-                <p class="text-center text-gray-500 text-sm font-normal leading-snug">Get in touch with us: <a
-                        href="" class="hover:text-gray-100 transition-all duration-700 ease-in-out">
-                        mail@proxyme.com</a></p>
+                {{-- <p class="text-center text-gray-500 text-sm font-normal leading-snug">Get in touch with us: <a href=""
+                        class="hover:text-gray-100 transition-all duration-700 ease-in-out">
+                        mail@proxyme.com</a></p> --}}
             </div>
         </div>
     </section>
