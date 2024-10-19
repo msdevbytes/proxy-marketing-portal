@@ -51,6 +51,9 @@ class MarketResource extends Resource
                 Forms\Components\TextInput::make('commission')
                     ->required()
                     ->numeric(),
+                Forms\Components\TextInput::make('portal_fee')
+                    ->required()
+                    ->numeric(),
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->readOnly()
@@ -70,6 +73,8 @@ class MarketResource extends Resource
                 Tables\Columns\TextColumn::make('market')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('commission')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('portal_fee')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),

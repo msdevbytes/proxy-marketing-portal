@@ -40,12 +40,12 @@ class Product extends Model
         "marketing_end_date",
         "category_id",
         "market_id",
-        "status"
+        "status",
+        "portal_fee"
     ];
 
     protected $casts = [
         "status" => "boolean",
-        "keyword" => "array",
         'marketing_end_date' => 'date'
     ];
 

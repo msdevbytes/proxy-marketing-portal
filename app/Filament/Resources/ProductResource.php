@@ -16,6 +16,7 @@ use Closure;
 use Filament\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
@@ -90,7 +91,7 @@ class ProductResource extends Resource
                             ->inline(false),
                         Forms\Components\TextInput::make('product_brand')
                             ->maxLength(255),
-                        Forms\Components\TagsInput::make('keyword')->required()->separator(Product::keywordSeparator())->color('info'),
+                        Forms\Components\TextInput::make('keyword')->required(),
                         Forms\Components\TextInput::make('amz_sold_by')->required()
                             ->maxLength(255),
 
@@ -131,6 +132,7 @@ class ProductResource extends Resource
                         ->maxLength(255),
                 ])->columns(['md' => 2, 'sm' => 1]),
                 Section::make('Select Category & Market')
+
                     ->schema([
                         Forms\Components\Select::make('category_id')
                             ->required()
@@ -141,17 +143,30 @@ class ProductResource extends Resource
                         Forms\Components\Select::make('market_id')
                             ->searchable()
                             ->required()
+                            ->reactive()
                             ->native(false)
                             ->preload()
                             ->live()
-                            ->relationship('market', titleAttribute: 'market'),
+                            ->relationship('market', titleAttribute: 'market')
+                            ->afterStateUpdated(function ($set, $state) {
+                                $client = Market::find($state);
+                                $description = $client ? $client->portal_fee : 'Please select Market for Portal Fee';
+                                $set('employeeTotalCost', $description);
+                            }),
+                        Placeholder::make('portal_fee')
+                            ->disabled()
+                            ->content(fn(Get $get) => $get('employeeTotalCost'))
+                            ->default('Please select Market for Portal Fee')
+                            ->extraAttributes([
+                                'class' => 'text-left !text-2xl font-bold !leading-none',
+                            ]),
                         Forms\Components\TextInput::make('commission')
                             ->numeric()
                             ->live()
                             ->rules([
                                 fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                     if ($get('market_id')) {
-                                        $market = \App\Models\Market::where('id', $get('market_id'))->first();
+                                        $market = Market::find($get('market_id'));
                                         if ($value < $market->commission) {
                                             $comm = Str::replace('data.', '', $attribute);
                                             $fail("The {$comm} can not be lessthen {$market->commission}.");
@@ -160,7 +175,7 @@ class ProductResource extends Resource
                                 },
                             ])
                             ->required(),
-                    ])->columns(['md' => 3, 'sm' => 1]),
+                    ])->columns(['md' => 4, 'sm' => 1]),
 
                 Section::make('Images')
                     ->schema([
@@ -219,13 +234,16 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('remaning_orders')
                     ->view('tables.columns.product-remining-orders-count')
                     ->alignCenter()
-                    ->sortable(),
+                    ->sortable()->visible(!Auth::user()->isPM()),
                 Tables\Columns\TextColumn::make('commission')
                     ->money('PKR', locale: 'Rs')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('portal_fee')
+                    ->money('PKR', locale: 'Rs')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('keyword')
+                    ->copyable()
                     ->color('primary')
-                    ->separator(',')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('id')->label('Product ID')->searchable(),
                 Tables\Columns\ImageColumn::make('image')->square()->simpleLightbox(),

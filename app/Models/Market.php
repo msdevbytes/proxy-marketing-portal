@@ -15,6 +15,7 @@ class Market extends Model
         'market',
         'status',
         'commission',
+        'portal_fee',
         'slug'
     ];
 
