@@ -186,6 +186,89 @@ class OrderResource extends Resource
                     ])->from('md'),
                 ])->visible(Auth::user()->isPMM()),
 
+                Group::make()->schema([
+                    Section::make('Customer Detail')->schema([
+                        Forms\Components\TextInput::make('customer_email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Toggle::make('is_customer_scammer')
+                            ->onColor('danger')
+                            ->inline(false)
+                            ->required(),
+
+                    ])->columns([
+                        'md' => 3,
+                        'sm' => 1
+                    ]),
+                    Section::make('Info')->schema([
+                        Forms\Components\TextInput::make('review_link')
+                            ->url()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('amz_order_number')
+                            ->label('Amazon Order Number')
+                            ->required()
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('review_type_commission')
+                            ->required()
+                            ->numeric()
+                            ->default(0.00),
+                        Forms\Components\Select::make('user_id')
+                            ->relationship('user', 'name', fn(User $user) => $user->withoutRole('Super Admin'))
+                            ->preload()
+                            ->native(false)
+                            ->searchable()
+                            ->required()->visible(Auth::user()->isSuperAdmin()),
+                        Forms\Components\Select::make("status")
+                            ->preload()
+                            ->label('Order Status')
+                            ->options(function () {
+                                $status = [];
+                                foreach (OrderStatus::cases() as $case) {
+                                    $status[$case->value] = $case->value;
+                                }
+
+                                return $status;
+                            })->native(false),
+
+                        Forms\Components\Textarea::make('remarks')
+                            ->columnSpanFull(),
+
+
+                    ])->columns([
+                        'md' => 3,
+                        'sm' => 1
+                    ]),
+                    Section::make('Images')->schema([
+                        Forms\Components\FileUpload::make('refund_image')
+                            ->image(),
+                        Forms\Components\FileUpload::make('invoice_image')
+                            ->label("Order screenshot")
+                            ->image()
+                            ->downloadable(true)
+                            ->disabled(Auth::user()->isPMM())
+                            ->previewable(true)
+                            ->deletable(Auth::user()->isPM())
+                            ->placeholder('You can only view this field'),
+                        Forms\Components\FileUpload::make('review_image')
+                            ->image()->downloadable(true)
+                            ->previewable(true)
+                            ->disabled(Auth::user()->isPMM())
+                            ->deletable(Auth::user()->isPM())
+                            ->placeholder('You can only view this field'),
+                        Forms\Components\FileUpload::make('buyer_verification_image')
+                            ->image()->downloadable(true)
+                            ->previewable(true)
+                            ->disabled(Auth::user()->isPMM())
+                            ->deletable(Auth::user()->isPM())
+                            ->placeholder('You can only view this field'),
+                    ])->columns([
+                        'md' => 3,
+                        'sm' => 1
+                    ]),
+                ])->visible(Auth::user()->isSuperAdmin())
+
 
             ])->columns(1);
     }

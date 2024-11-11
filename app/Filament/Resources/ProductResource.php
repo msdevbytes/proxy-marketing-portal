@@ -240,7 +240,7 @@ class ProductResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('portal_fee')
                     ->money('PKR', locale: 'Rs')
-                    ->sortable(),
+                    ->sortable()->visible(!Auth::user()->isPM()),
                 Tables\Columns\TextColumn::make('keyword')
                     ->copyable()
                     ->color('primary')
