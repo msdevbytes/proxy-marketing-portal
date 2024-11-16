@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Filament\Support\Enums\IconPosition;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Number;
+use Illuminate\Support\Number;
 use Spatie\FilamentSimpleStats\SimpleStat;
 
 class ProductStatsOverview extends BaseWidget
