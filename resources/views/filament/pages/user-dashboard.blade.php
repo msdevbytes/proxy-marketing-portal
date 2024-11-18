@@ -7,9 +7,11 @@
         </section>
     @endif
 
-    <section class="flex flex-col">
-        @livewire('product-stats', ['class' => 'mx-auto md:w-8/12 w-full'], key('product-stats-' . Auth::user()->id . Str::random(10)))
-    </section>
+    @if (!Auth::user()->isPm())
+        <section class="flex flex-col">
+            @livewire('product-stats', ['class' => 'mx-auto md:w-8/12 w-full'], key('product-stats-' . Auth::user()->id . Str::random(10)))
+        </section>
+    @endif
     <section id="pm-dashboard"
         class="grid md:grid-cols-2 xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 grid-rows-1 md:gap-4 gap-3">
 
