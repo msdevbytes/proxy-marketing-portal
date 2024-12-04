@@ -56,7 +56,10 @@ class Order extends Model
 
     function seller()
     {
-        return $this->product->user();
+        // if (!$this->product?->user()) {
+        //     dd($this);
+        // }
+        return $this?->product?->user();
     }
 
 

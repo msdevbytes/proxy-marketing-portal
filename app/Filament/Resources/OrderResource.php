@@ -29,6 +29,7 @@ use Filament\Infolists\Infolist;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
@@ -289,8 +290,10 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
+
                 ViewColumn::make('user')->view('tables.columns.user-info'),
                 ViewColumn::make('seller')->view('tables.columns.user-info'),
+                TextColumn::make('user.name')->searchable()->toggleable(isToggledHiddenByDefault: true)->label('User'),
 
                 Tables\Columns\TextColumn::make('amz_order_number')
                     ->searchable(),

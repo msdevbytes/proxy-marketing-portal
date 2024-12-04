@@ -13,6 +13,7 @@ use App\Models\User;
 use Auth;
 use Carbon\Carbon;
 use Closure;
+use Faker\Provider\ar_EG\Text;
 use Filament\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -222,6 +223,7 @@ class ProductResource extends Resource
             })->recordUrl(fn() => null)->recordAction(null)
             ->columns([
                 ViewColumn::make('user')->view('tables.columns.user-info')->label('Seller'),
+                TextColumn::make('user.name')->searchable()->toggleable(isToggledHiddenByDefault: true)->label('Seller'),
                 Tables\Columns\TextColumn::make('market.market')
                     ->sortable(),
 
