@@ -133,7 +133,6 @@ class OrderResource extends Resource
                                 ->label('Amazon Order Number')
                                 ->required()
                                 ->maxLength(255),
-
                             Forms\Components\TextInput::make('review_type_commission')
                                 ->required()
                                 ->numeric()
@@ -146,7 +145,6 @@ class OrderResource extends Resource
                                     foreach (Order::orderStatusByRole() as $case) {
                                         $status[$case] = $case;
                                     }
-
                                     return $status;
                                 })->native(false),
 

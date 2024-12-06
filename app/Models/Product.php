@@ -36,6 +36,7 @@ class Product extends Model
         "review_instructions",
         "refund_conditions",
         "comission_conditions",
+        "review_type_commission",
         "instructions",
         "marketing_end_date",
         "category_id",

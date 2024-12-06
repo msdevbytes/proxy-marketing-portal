@@ -1,12 +1,13 @@
 @vite('resources/css/app.css')
 <x-filament-panels::page>
-
     @if (Auth::user()->isPm() || Auth::useR()->isSuperAdmin())
         <section>
             @livewire('bonus', key('bonus-' . Auth::user()->id . Str::random(10)))
         </section>
     @endif
-
+    <section>
+        @livewire('offer')
+    </section>
     @if (!Auth::user()->isPm())
         <section class="flex flex-col">
             @livewire('product-stats', ['class' => 'mx-auto md:w-8/12 w-full'], key('product-stats-' . Auth::user()->id . Str::random(10)))
