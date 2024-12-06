@@ -1,4 +1,4 @@
-@if ($offers)
+@if ($offers?->count())
     @vite('resources/js/app.js')
     <link href="https://cdn.jsdelivr.net/npm/simplelightbox@2.14.3/dist/simple-lightbox.min.css" rel="stylesheet">
     <div class="p-10 rounded-md text-center">
