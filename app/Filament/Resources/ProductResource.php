@@ -19,6 +19,7 @@ use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
@@ -222,8 +223,9 @@ class ProductResource extends Resource
                 }
             })->recordUrl(fn() => null)->recordAction(null)
             ->columns([
-                ViewColumn::make('user')->view('tables.columns.user-info')->label('Seller'),
-                TextColumn::make('user.name')->searchable()->toggleable(isToggledHiddenByDefault: true)->label('Seller'),
+                ViewColumn::make('user')->view('tables.columns.user-info')->label('Seller')->hidden(Auth::user()->isPMM()),
+                TextColumn::make('user.name')->searchable()->toggleable(isToggledHiddenByDefault: true)->label(Auth::user()->isPMM() ? 'PMM Name' : 'Seller'),
+                TextColumn::make('seller')->label("Chinese Seller")->searchable()->hidden(Auth::user()->isPM()),
                 Tables\Columns\TextColumn::make('market.market')
                     ->sortable(),
 
@@ -287,6 +289,13 @@ class ProductResource extends Resource
             ->filters([
                 SelectFilter::make('market')->relationship('market', 'market')->searchable()->preload()->native(false),
                 SelectFilter::make('category')->relationship('category', 'category')->searchable()->preload()->native(false),
+                Filter::make('seller')
+                    ->form([
+                        TextInput::make('seller')->label('Chinese Seller')->placeholder("search by chinese seller name"),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return $query->where('seller', 'like', '%' . $data['seller'] . '%');
+                    }),
                 // SelectFilter::make('users')->label('PMMs')->relationship('user', 'name', function (User $user) {
                 //     return $user->role('PMM');
                 // })->native(false)->searchable()->preload()->hidden(Auth::user()->isPMM()),
