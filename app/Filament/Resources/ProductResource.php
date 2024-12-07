@@ -289,6 +289,7 @@ class ProductResource extends Resource
             ->filters([
                 SelectFilter::make('market')->relationship('market', 'market')->searchable()->preload()->native(false),
                 SelectFilter::make('category')->relationship('category', 'category')->searchable()->preload()->native(false),
+                SelectFilter::make('user')->relationship('user', 'name')->searchable()->label('Seller')->preload()->native(false)->hidden(Auth::user()->isPMM()),
                 Filter::make('seller')
                     ->form([
                         TextInput::make('seller')->label('Chinese Seller')->placeholder("search by chinese seller name"),
