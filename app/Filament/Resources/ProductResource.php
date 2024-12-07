@@ -296,13 +296,7 @@ class ProductResource extends Resource
                     ->query(function (Builder $query, array $data) {
                         return $query->where('seller', 'like', '%' . $data['seller'] . '%');
                     })->hidden(Auth::user()->isPM()),
-                // SelectFilter::make('users')->label('PMMs')->relationship('user', 'name', function (User $user) {
-                //     return $user->role('PMM');
-                // })->native(false)->searchable()->preload()->hidden(Auth::user()->isPMM()),
-                // DateRangeFilter::make('created_at')
-                //     ->label('Date Range')
-                //     ->autoApply(false)
-                //     ->timezone(env('APP_TIMEZONE'))
+
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4)->filtersFormWidth(MaxWidth::FourExtraLarge)
             ->actions([
