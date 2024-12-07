@@ -2,9 +2,12 @@
 
 namespace App\Filament\Pages;
 
+use App\Tables\Columns\CustomImageColumn;
 use DeepCopy\Filter\Filter;
+use Filament\Contracts\Plugin;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\BasePage;
+use Filament\Panel\Concerns\HasPlugins;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -19,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 class ProductListForBuyer extends BasePage implements HasTable
 {
     use InteractsWithTable;
+    use HasPlugins;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -30,6 +34,8 @@ class ProductListForBuyer extends BasePage implements HasTable
     {
         return false;
     }
+
+
 
     public static function table(Table $table): Table
     {
@@ -51,7 +57,7 @@ class ProductListForBuyer extends BasePage implements HasTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('id')->sortable()->searchable(),
-                ImageColumn::make('image')->square(),
+                CustomImageColumn::make('image'),
             ])
             ->filters([
                 FiltersFilter::make('ID')
