@@ -293,14 +293,14 @@ class ProductResource extends Resource
                     return $query->with("roles")->whereHas("roles", function ($q) {
                         $q->whereIn("name", ["PMM", "Super Admin"]);
                     });
-                })->searchable()->label('Seller')->preload()->native(false)->hidden(Auth::user()->isPMM() || (Auth::user()->isPMM() == Auth::user()->isPM())),
+                })->searchable()->label('Seller')->preload()->native(false)->hidden(Auth::user()->isPMM() && !(Auth::user()->isPMM() == Auth::user()->isPM())),
                 Filter::make('seller')
                     ->form([
                         TextInput::make('seller')->label('Chinese Seller')->placeholder("search by chinese seller name"),
                     ])
                     ->query(function (Builder $query, array $data) {
                         return $query->where('seller', 'like', '%' . $data['seller'] . '%');
-                    })->hidden(Auth::user()->isPM() || (Auth::user()->isPMM() == Auth::user()->isPM())),
+                    })->hidden(Auth::user()->isPM() && !(Auth::user()->isPMM() == Auth::user()->isPM())),
 
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4)->filtersFormWidth(MaxWidth::FourExtraLarge)
