@@ -133,10 +133,6 @@ class OrderResource extends Resource
                                 ->label('Amazon Order Number')
                                 ->required()
                                 ->maxLength(255),
-                            Forms\Components\TextInput::make('review_type_commission')
-                                ->required()
-                                ->numeric()
-                                ->default(0.00),
                             Forms\Components\Select::make("status")
                                 ->preload()
                                 ->label('Order Status')

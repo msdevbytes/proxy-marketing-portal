@@ -20,9 +20,11 @@ class CreateOrder extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $product = Product::where('id', $data['product_id'])->first();
         $data['status'] = $data['status'] ?? OrderStatus::ORDERED;
         $data['user_id'] = $data['user_id'] ?? Auth::user()->id;
-        $data['market_id'] = Product::where('id', $data['product_id'])->first()->market_id;
+        $data['market_id'] = $product?->market_id;
+        $data['review_type_commission'] = $product?->commission;
         return parent::mutateFormDataBeforeCreate($data);
     }
 
